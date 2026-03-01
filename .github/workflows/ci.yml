@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  landing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,22 +17,11 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install seal dependencies
-        run: cd seal && npm ci
-
       - name: Install landing dependencies
         run: cd landing && npm ci
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+      - name: Lint landing
+        run: cd landing && npm run lint
 
-      - name: Install pre-commit
-        run: pip install pre-commit
-
-      - name: Setup Rust (otter)
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Run pre-commit
-        run: pre-commit run --all-files
+      - name: Build landing
+        run: cd landing && npm run build
