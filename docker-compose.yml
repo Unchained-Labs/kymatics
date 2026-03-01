@@ -35,8 +35,14 @@ services:
       context: ./lavoix
       dockerfile: Dockerfile
     env_file:
-      - ./lavoix/.env
+      - ./.env
     environment:
+      # Explicitly required secrets/runtime vars from root .env
+      LAVOIX_MISTRAL_API_KEY: ${MISTRAL_API_KEY:?Set MISTRAL_API_KEY in kymatics/.env}
+      LAVOIX_VOXTRAL_MODEL: ${LAVOIX_VOXTRAL_MODEL:-voxtral-mini-latest}
+      LAVOIX_VOXTRAL_TTS_MODEL: ${LAVOIX_VOXTRAL_TTS_MODEL:-voxtral-tts-latest}
+      LAVOIX_DEFAULT_STT_PROVIDER: ${LAVOIX_DEFAULT_STT_PROVIDER:-mistral}
+      LAVOIX_DEFAULT_TTS_PROVIDER: ${LAVOIX_DEFAULT_TTS_PROVIDER:-mistral}
       LAVOIX_HOST: 0.0.0.0
       LAVOIX_PORT: 8090
     ports:
@@ -62,8 +68,10 @@ services:
       lavoix:
         condition: service_started
     env_file:
-      - ./otter/.env
+      - ./.env
     environment:
+      # Explicitly required secrets/runtime vars from root .env
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:?Set MISTRAL_API_KEY in kymatics/.env}
       OTTER_DATABASE_URL: postgres://otter:otter@postgres:5432/otter
       OTTER_REDIS_URL: redis://redis:6379
       OTTER_LISTEN_ADDR: 0.0.0.0:8080
@@ -98,8 +106,10 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - ./otter/.env
+      - ./.env
     environment:
+      # Explicitly required secrets/runtime vars from root .env
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:?Set MISTRAL_API_KEY in kymatics/.env}
       OTTER_DATABASE_URL: postgres://otter:otter@postgres:5432/otter
       OTTER_REDIS_URL: redis://redis:6379
       OTTER_VIBE_BIN: vibe
