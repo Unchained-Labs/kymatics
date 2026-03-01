@@ -1,0 +1,6 @@
+[submodule "seal"]
+	path = seal
+	url = git@github.com:Unchained-Labs/seal.git
+[submodule "otter"]
+	path = otter
+	url = git@github.com:Unchained-Labs/otter.git
