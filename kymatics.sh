@@ -70,22 +70,18 @@ case "${cmd}" in
     docker compose version
     echo "==> Env files"
     env_ok=1
-    if [[ -f "./otter/.env" ]]; then
-      echo "ok: otter/.env"
+    if [[ -f "./.env" ]]; then
+      echo "ok: .env"
     else
       env_ok=0
-      echo "missing: otter/.env (will auto-bootstrap from .env.example on up)"
-    fi
-    if [[ -f "./lavoix/.env" ]]; then
-      echo "ok: lavoix/.env"
-    else
-      env_ok=0
-      echo "missing: lavoix/.env (will auto-bootstrap from .env.example on up)"
+      echo "missing: .env (will auto-bootstrap from .env.example on up)"
     fi
     if [[ "${env_ok}" -eq 1 ]]; then
       echo "==> Compose config"
       docker compose config >/dev/null
       echo "compose config: ok"
+      [[ -f "./otter/.env" ]] && echo "ok: otter/.env (propagated)" || echo "missing: otter/.env (will be generated on up)"
+      [[ -f "./lavoix/.env" ]] && echo "ok: lavoix/.env (propagated)" || echo "missing: lavoix/.env (will be generated on up)"
     else
       echo "==> Compose config skipped (missing env files)"
     fi

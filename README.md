@@ -46,6 +46,20 @@ From the repo root, start all services (Postgres, Redis, Otter server + worker, 
 docker compose up --build
 ```
 
+Root environment management:
+
+```bash
+cp .env.example .env
+```
+
+`kymatics` uses the root `.env` as the single source of truth for Docker Compose.
+`./scripts/up-stack.sh` (and `./kymatics.sh up`) will also propagate this root `.env` to:
+
+- `otter/.env`
+- `lavoix/.env`
+
+This keeps local submodule runs aligned with stack configuration.
+
 - **Otter API**: http://localhost:8080
 - **Seal (Builder Board)**: http://localhost:3000
 - **Landing**: http://localhost:3001

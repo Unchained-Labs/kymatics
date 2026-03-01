@@ -4,15 +4,34 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
-if [[ ! -f "./otter/.env" && -f "./otter/.env.example" ]]; then
-  echo "==> Bootstrapping ./otter/.env from .env.example"
-  cp "./otter/.env.example" "./otter/.env"
+usage() {
+  cat <<'EOF'
+Usage: ./scripts/up-stack.sh
+
+Bootstraps root .env when missing, propagates it to service env files, then
+builds and starts the full stack with health checks.
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
 fi
 
-if [[ ! -f "./lavoix/.env" && -f "./lavoix/.env.example" ]]; then
-  echo "==> Bootstrapping ./lavoix/.env from .env.example"
-  cp "./lavoix/.env.example" "./lavoix/.env"
+if [[ $# -gt 0 ]]; then
+  echo "Unknown option: $1" >&2
+  usage
+  exit 1
 fi
+
+if [[ ! -f "./.env" && -f "./.env.example" ]]; then
+  echo "==> Bootstrapping root .env from .env.example"
+  cp "./.env.example" "./.env"
+fi
+
+echo "==> Propagating root .env to service env files"
+cp "./.env" "./otter/.env"
+cp "./.env" "./lavoix/.env"
 
 echo "==> Starting full stack (build + detached)"
 docker compose up -d --build
