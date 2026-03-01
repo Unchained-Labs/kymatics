@@ -4,3 +4,6 @@
 [submodule "otter"]
 	path = otter
 	url = git@github.com:Unchained-Labs/otter.git
+[submodule "lavoix"]
+	path = lavoix
+	url = git@github.com:Unchained-Labs/lavoix.git
