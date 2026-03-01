@@ -1,5 +1,7 @@
 # Kymatics
 
+[![CI](https://github.com/Unchained-Labs/kymatics/actions/workflows/ci.yml/badge.svg)](https://github.com/Unchained-Labs/kymatics/actions/workflows/ci.yml)
+
 **Kymatics** is a generative engine that treats the human voice as a physical force. It uses the resonance of spoken intent to organize digital chaos into structured form, allowing creators to literally sound their ideas into reality.
 
 Kymatics is an intelligent synthesis engine that transforms spoken intent into immediate digital structures—letting creators manifest complex interfaces at the speed of conversation, directly from a smartphone.
@@ -88,3 +90,11 @@ You can still call scripts directly:
 
 - `./scripts/up-stack.sh`
 - `./scripts/down-stack.sh --volumes --images`
+
+## Documentation
+
+Project-level docs live in `docs/`:
+
+- `docs/README.md` (documentation index)
+- `docs/architecture.md` (system architecture and boundaries)
+- `docs/operations.md` (stack operations, env model, troubleshooting)
