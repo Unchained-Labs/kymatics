@@ -1,0 +1,34 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: (node_modules|vendor|/dist)/
+      - id: end-of-file-fixer
+        exclude: (node_modules|vendor|/dist)/
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-yaml
+
+  - repo: local
+    hooks:
+      - id: otter-fmt
+        name: cargo fmt (otter)
+        entry: bash -c 'cd otter && cargo fmt --all'
+        language: system
+        pass_filenames: false
+      - id: otter-clippy
+        name: cargo clippy (otter)
+        entry: bash -c 'cd otter && cargo clippy --workspace --all-targets -- -D warnings'
+        language: system
+        pass_filenames: false
+      - id: seal-lint
+        name: eslint (seal)
+        entry: bash -c 'cd seal && npm run lint'
+        language: system
+        pass_filenames: false
+      - id: landing-lint
+        name: eslint (landing)
+        entry: bash -c 'cd landing && npm run lint'
+        language: system
+        pass_filenames: false
