@@ -36,6 +36,8 @@ cd seal && npm install && npm run dev
 cd landing && npm install && npm run dev
 ```
 
+To change the URL of the **START NOW** button, copy `landing/.env.example` to `landing/.env` and set `VITE_START_NOW_URL` (default: `http://localhost:3000/`).
+
 ## Development
 
 - Use the **root** [.pre-commit-config.yaml](.pre-commit-config.yaml): run `pre-commit run --all-files` before committing.

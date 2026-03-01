@@ -50,6 +50,20 @@ docker compose up --build
 
 Seal is built with `VITE_OTTER_URL=http://localhost:8080` so the browser can reach the API. Ports 3000/3001 avoid conflicts with local Vite dev servers (5173/5174).
 
+## Deploy landing on Vercel
+
+1. Go to [vercel.com](https://vercel.com) and sign in (GitHub).
+2. **Add New Project** → **Import** your `kymatics` repository.
+3. **Configure:**
+   - **Root Directory:** click **Edit**, set to `landing`, then **Continue**.
+   - **Framework Preset:** Vite (auto-detected).
+   - **Build Command:** `npm run build` (default).
+   - **Output Directory:** `dist` (default).
+   - **Install Command:** `npm ci` (default).
+4. **Deploy.** Vercel will build and host the landing site. Later pushes to `main` (or your production branch) will trigger automatic deployments.
+
+The [landing/vercel.json](landing/vercel.json) in this repo sets the build output and SPA routing so client-side routes work.
+
 ## Development
 
 - Use the **root** [.pre-commit-config.yaml](.pre-commit-config.yaml): run `pre-commit run --all-files` before committing.

@@ -15,11 +15,19 @@ function Hero() {
     <header className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-24">
       <div className="flex flex-col items-center gap-12 text-center">
         <div className="flex flex-col items-center gap-6">
-          <LogoIcon
-            width={900}
-            height={625}
-            className="h-auto w-full max-w-[640px] sm:max-w-[760px] md:max-w-[900px]"
-          />
+          <div className="flex flex-col items-center gap-2">
+            <LogoIcon
+              width={900}
+              height={625}
+              className="h-auto w-full max-w-[640px] sm:max-w-[760px] md:max-w-[900px]"
+            />
+            <a
+              href={import.meta.env.VITE_START_NOW_URL ?? "http://localhost:3000/"}
+              className="font-display inline-flex items-center justify-center rounded-lg border-2 border-kymatics-mint bg-kymatics-mint/10 px-8 py-3 text-lg font-semibold tracking-wide text-kymatics-mint transition-colors hover:bg-kymatics-mint/20"
+            >
+              START NOW
+            </a>
+          </div>
           <h1 className="font-display text-3xl font-semibold tracking-tight text-kymatics-cream sm:text-4xl md:text-5xl lg:text-6xl">
             <span className="text-kymatics-mint glow-text-mint">Voice</span>
             {" "}
@@ -108,6 +116,24 @@ function Features() {
             </li>
           ))}
         </ul>
+        <p className="font-display mt-10 text-center text-sm text-kymatics-muted">
+          This app works best with Voxtral for voice-to-text and Mistral Vibe, based on Mistral Large 3, for code assistant, but any model can be plugged in.{" "}
+          <a
+            href="https://mistral.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-kymatics-mint underline decoration-kymatics-mint underline-offset-2 hover:text-kymatics-cream hover:decoration-kymatics-cream"
+          >
+            <img
+              src="https://mistral.ai/favicon.ico"
+              alt=""
+              width={16}
+              height={16}
+              className="inline-block"
+            />
+            Mistral AI
+          </a>
+        </p>
       </div>
     </section>
   );
