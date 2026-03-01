@@ -14,12 +14,12 @@ repos:
     hooks:
       - id: otter-fmt
         name: cargo fmt (otter)
-        entry: bash -c 'cd otter && cargo fmt --all'
+        entry: bash -lc 'cd otter && export PATH="$HOME/.cargo/bin:$PATH" && cargo fmt --all'
         language: system
         pass_filenames: false
       - id: otter-clippy
         name: cargo clippy (otter)
-        entry: bash -c 'cd otter && cargo clippy --workspace --all-targets -- -D warnings'
+        entry: bash -lc 'cd otter && export PATH="$HOME/.cargo/bin:$PATH" && cargo clippy --workspace --all-targets -- -D warnings'
         language: system
         pass_filenames: false
       - id: seal-lint
