@@ -48,7 +48,8 @@ services:
     ports:
       - "${LAVOIX_PORT:-8090}:8090"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8090/healthz >/dev/null 2>&1"]
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:8090/healthz >/dev/null 2>&1"]
       interval: 10s
       timeout: 5s
       retries: 10
