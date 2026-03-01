@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  landing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install landing dependencies
+        run: cd landing && npm ci
+
+      - name: Lint landing
+        run: cd landing && npm run lint
+
+      - name: Build landing
+        run: cd landing && npm run build

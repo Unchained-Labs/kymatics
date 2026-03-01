@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --kymatics-bg: #00052B;
+    --kymatics-surface: #0a0a3a;
+    --kymatics-surface-elevated: #12124a;
+    --kymatics-mint: #4BFFCA;
+    --kymatics-mint-dim: rgba(75, 255, 202, 0.15);
+    --kymatics-mint-glow: rgba(75, 255, 202, 0.25);
+    --kymatics-purple: #8024E7;
+    --kymatics-purple-dim: rgba(128, 36, 231, 0.2);
+    --kymatics-purple-glow: rgba(128, 36, 231, 0.3);
+    --kymatics-lavender: #B187FF;
+    --kymatics-lavender-dim: rgba(177, 135, 255, 0.15);
+    --kymatics-text: #E8E6F0;
+    --kymatics-muted: #9B97B8;
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--kymatics-bg);
+    color: var(--kymatics-text);
+  }
+
+  body {
+    @apply font-sans;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.glow-border-mint {
+  box-shadow: 0 0 0 1px rgba(75, 255, 202, 0.2), 0 0 24px -4px var(--kymatics-mint-glow);
+}
+
+.glow-border-purple {
+  box-shadow: 0 0 0 1px rgba(128, 36, 231, 0.25), 0 0 24px -4px var(--kymatics-purple-glow);
+}
+
+.glow-text-mint {
+  text-shadow: 0 0 32px var(--kymatics-mint-glow);
+}
+
+.glow-text-purple {
+  text-shadow: 0 0 32px var(--kymatics-purple-glow);
+}

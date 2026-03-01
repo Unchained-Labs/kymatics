@@ -36,20 +36,6 @@ cd seal && npm install && npm run dev
 cd landing && npm install && npm run dev
 ```
 
-## Run with Docker
-
-From the repo root, start all services (Postgres, Redis, Otter server + worker, Seal, Landing):
-
-```bash
-docker compose up --build
-```
-
-- **Otter API**: http://localhost:8080
-- **Seal (Builder Board)**: http://localhost:3000
-- **Landing**: http://localhost:3001
-
-Seal is built with `VITE_OTTER_URL=http://localhost:8080` so the browser can reach the API. Ports 3000/3001 avoid conflicts with local Vite dev servers (5173/5174).
-
 ## Development
 
 - Use the **root** [.pre-commit-config.yaml](.pre-commit-config.yaml): run `pre-commit run --all-files` before committing.
