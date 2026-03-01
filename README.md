@@ -74,6 +74,7 @@ This keeps local submodule runs aligned with stack configuration.
 Seal is built with `VITE_OTTER_URL=/api` and uses the built-in proxy path for API calls.
 In Docker runtime, Nginx routes `/api/*` to `otter-server`.
 Otter uses a sibling-container runtime (via Docker SDK) and requires Docker socket access mounted into Otter services.
+Otter also exposes queue pause/resume controls and per-job demo URL registration for Seal browser preview.
 
 ## Development
 
@@ -105,3 +106,9 @@ Project-level docs live in `docs/`:
 - `docs/README.md` (documentation index)
 - `docs/architecture.md` (system architecture and boundaries)
 - `docs/operations.md` (stack operations, env model, troubleshooting)
+
+## Recent Runtime/Queue Features
+
+- Pause/resume queued jobs without changing queue status (`POST /v1/jobs/{id}/pause|resume`).
+- Register job demo URLs (`POST /v1/jobs/{id}/preview-url`) for direct browser preview in Seal.
+- Runtime shell execution auto-recovers from missing/stopped workspace containers.

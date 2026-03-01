@@ -41,6 +41,7 @@ cp .env.example .env
   - `OTTER_RUNTIME_CONTAINER_PREFIX`
   - `OTTER_RUNTIME_IMAGE_PREFIX`
   - `OTTER_RUNTIME_DEFAULT_HOST`
+  - `OTTER_API_BASE_URL` (used in Vibe system prompt to call back into Otter APIs, e.g. job preview URL registration)
 
 ## Common Troubleshooting
 
@@ -54,6 +55,9 @@ cp .env.example .env
   - verify Docker socket mount in `docker-compose.yml`
   - confirm `OTTER_RUNTIME_ENABLED=true`
   - check `otter-server` logs for Docker API errors
+- Docker daemon reports API version mismatch (e.g. client too old):
+  - rebuild `otter-server` and `otter-worker` images to apply latest Docker client/runtime fixes
+  - verify Otter runtime uses a compatible Docker API version with your host daemon
 
 ## Security Note (Sibling Containers)
 
