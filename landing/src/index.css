@@ -4,13 +4,20 @@
 
 @layer base {
   :root {
-    --kymatics-bg: #252525;
-    --kymatics-surface: #2d2d2d;
+    /* Dark base */
+    --kymatics-bg: #0f0f12;
+    --kymatics-surface: #16161a;
+    --kymatics-surface-elevated: #1c1c22;
+    /* Mint & light purple as primary accents */
+    --kymatics-mint: #C8F7C1;
+    --kymatics-mint-dim: rgba(200, 247, 193, 0.15);
+    --kymatics-mint-glow: rgba(200, 247, 193, 0.25);
+    --kymatics-purple: #E1A2FC;
+    --kymatics-purple-dim: rgba(225, 162, 252, 0.2);
+    --kymatics-purple-glow: rgba(225, 162, 252, 0.3);
+    --kymatics-primary: #5D4DC2;
     --kymatics-text: #F2EFE9;
     --kymatics-muted: #CAC4B9;
-    --kymatics-accent: #E1A2FC;
-    --kymatics-primary: #5D4DC2;
-    --kymatics-mint: #C8F7C1;
     --kymatics-rose: #CCBABD;
     color-scheme: dark;
   }
@@ -20,15 +27,45 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   min-height: 100vh;
   margin: 0;
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: "Outfit", var(--font-sans), system-ui, sans-serif;
   background: var(--kymatics-bg);
   color: var(--kymatics-text);
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* Futuristic gradient mesh background */
+.bg-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--kymatics-purple-dim), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 50%, var(--kymatics-mint-dim), transparent),
+    radial-gradient(ellipse 50% 30% at 20% 80%, var(--kymatics-purple-dim), transparent),
+    var(--kymatics-bg);
+}
+
+/* Glow borders using mint/purple */
+.glow-border-mint {
+  box-shadow: 0 0 0 1px rgba(200, 247, 193, 0.2), 0 0 24px -4px var(--kymatics-mint-glow);
+}
+
+.glow-border-purple {
+  box-shadow: 0 0 0 1px rgba(225, 162, 252, 0.25), 0 0 24px -4px var(--kymatics-purple-glow);
+}
+
+.glow-text-mint {
+  text-shadow: 0 0 32px var(--kymatics-mint-glow);
+}
+
+.glow-text-purple {
+  text-shadow: 0 0 32px var(--kymatics-purple-glow);
 }
