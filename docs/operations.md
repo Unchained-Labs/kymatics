@@ -7,6 +7,7 @@ This guide describes how to run and operate the Kymatics stack locally.
 - Docker Engine + Docker Compose plugin
 - Git (with submodule support)
 - Optional: Python + pre-commit for local quality gates
+- Docker socket access on host (`/var/run/docker.sock`) for Otter sibling-container runtime
 
 ## First Run
 
@@ -33,6 +34,13 @@ cp .env.example .env
 - Edit only `kymatics/.env` for stack-level values.
 - Keep API keys and runtime tuning in root `.env`.
 - Use `.env.example` as the canonical template for onboarding.
+- Sibling container runtime keys:
+  - `OTTER_RUNTIME_ENABLED`
+  - `OTTER_RUNTIME_DOCKER_SOCKET`
+  - `OTTER_RUNTIME_NETWORK`
+  - `OTTER_RUNTIME_CONTAINER_PREFIX`
+  - `OTTER_RUNTIME_IMAGE_PREFIX`
+  - `OTTER_RUNTIME_DEFAULT_HOST`
 
 ## Common Troubleshooting
 
@@ -42,6 +50,15 @@ cp .env.example .env
   - `./kymatics.sh down --volumes` then `./kymatics.sh up`.
 - Missing env values:
   - run `./kymatics.sh doctor` to validate expected files and compose resolution.
+- Runtime shell/browser preview unavailable:
+  - verify Docker socket mount in `docker-compose.yml`
+  - confirm `OTTER_RUNTIME_ENABLED=true`
+  - check `otter-server` logs for Docker API errors
+
+## Security Note (Sibling Containers)
+
+- `otter-server` and `otter-worker` mount the host Docker socket to orchestrate workspace sibling containers.
+- This grants high host privileges to these services; only run in trusted local/dev environments unless hardened with strict host controls.
 
 ## Documentation Boundaries
 

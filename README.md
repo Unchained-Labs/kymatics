@@ -73,6 +73,7 @@ This keeps local submodule runs aligned with stack configuration.
 
 Seal is built with `VITE_OTTER_URL=/api` and uses the built-in proxy path for API calls.
 In Docker runtime, Nginx routes `/api/*` to `otter-server`.
+Otter uses a sibling-container runtime (via Docker SDK) and requires Docker socket access mounted into Otter services.
 
 ## Development
 

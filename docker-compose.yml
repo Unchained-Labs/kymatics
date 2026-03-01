@@ -85,12 +85,20 @@ services:
       OTTER_DEFAULT_WORKSPACE_PATH: /workspaces
       OTTER_DEFAULT_WORKSPACE_SUBDIR: ${OTTER_DEFAULT_WORKSPACE_SUBDIR:-auto}
       OTTER_LAVOIX_URL: http://lavoix:8090
+      OTTER_RUNTIME_ENABLED: ${OTTER_RUNTIME_ENABLED:-true}
+      OTTER_RUNTIME_DOCKER_SOCKET: ${OTTER_RUNTIME_DOCKER_SOCKET:-unix:///var/run/docker.sock}
+      OTTER_RUNTIME_NETWORK: ${OTTER_RUNTIME_NETWORK:-kymatics_default}
+      OTTER_RUNTIME_CONTAINER_PREFIX: ${OTTER_RUNTIME_CONTAINER_PREFIX:-otter-ws}
+      OTTER_RUNTIME_IMAGE_PREFIX: ${OTTER_RUNTIME_IMAGE_PREFIX:-otter/workspace}
+      OTTER_RUNTIME_DEFAULT_HOST: ${OTTER_RUNTIME_DEFAULT_HOST:-http://localhost}
+      OTTER_RUNTIME_MAX_LOG_LINES: ${OTTER_RUNTIME_MAX_LOG_LINES:-2000}
       RUST_LOG: ${OTTER_RUST_LOG:-info}
     ports:
       - "${OTTER_PORT:-8080}:8080"
     volumes:
       - ./otter/workspaces:/workspaces
       - vibe_state:/var/lib/otter/vibe
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
   otter-worker:
@@ -119,10 +127,18 @@ services:
       OTTER_ALLOWED_ROOTS: /workspaces
       OTTER_DEFAULT_WORKSPACE_PATH: /workspaces
       OTTER_DEFAULT_WORKSPACE_SUBDIR: ${OTTER_DEFAULT_WORKSPACE_SUBDIR:-auto}
+      OTTER_RUNTIME_ENABLED: ${OTTER_RUNTIME_ENABLED:-true}
+      OTTER_RUNTIME_DOCKER_SOCKET: ${OTTER_RUNTIME_DOCKER_SOCKET:-unix:///var/run/docker.sock}
+      OTTER_RUNTIME_NETWORK: ${OTTER_RUNTIME_NETWORK:-kymatics_default}
+      OTTER_RUNTIME_CONTAINER_PREFIX: ${OTTER_RUNTIME_CONTAINER_PREFIX:-otter-ws}
+      OTTER_RUNTIME_IMAGE_PREFIX: ${OTTER_RUNTIME_IMAGE_PREFIX:-otter/workspace}
+      OTTER_RUNTIME_DEFAULT_HOST: ${OTTER_RUNTIME_DEFAULT_HOST:-http://localhost}
+      OTTER_RUNTIME_MAX_LOG_LINES: ${OTTER_RUNTIME_MAX_LOG_LINES:-2000}
       RUST_LOG: ${OTTER_RUST_LOG:-info}
     volumes:
       - ./otter/workspaces:/workspaces
       - vibe_state:/var/lib/otter/vibe
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
   seal:
