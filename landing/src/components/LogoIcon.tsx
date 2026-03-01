@@ -9,8 +9,8 @@ interface LogoIconProps {
  */
 export function LogoIcon({
   className = "",
-  width = 280,
-  height = 200
+  width = 900,
+  height = 625
 }: LogoIconProps) {
   return (
     <img
