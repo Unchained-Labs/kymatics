@@ -1,5 +1,49 @@
 import { LogoIcon } from "./components/LogoIcon";
 
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        fill="currentColor"
+        d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.17-1.11-1.48-1.11-1.48-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.9.82.09-.65.35-1.08.64-1.33-2.22-.25-4.56-1.1-4.56-4.9 0-1.09.4-1.98 1.03-2.67-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.7 9.7 0 0 1 5 0c1.9-1.29 2.74-1.02 2.74-1.02.55 1.38.2 2.4.1 2.65.64.69 1.02 1.58 1.02 2.67 0 3.8-2.34 4.65-4.57 4.89.36.3.68.9.68 1.82v2.7c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+      />
+    </svg>
+  );
+}
+
+function DocsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        fill="currentColor"
+        d="M6 3h8.5L19 7.5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm8 1.5V8h3.5L14 4.5ZM8 11h8v1.5H8V11Zm0 3h8v1.5H8V14Zm0 3h6v1.5H8V17Z"
+      />
+    </svg>
+  );
+}
+
+function ModuleIcon({ module, className }: { module: "seal" | "otter" | "lavoix"; className?: string }) {
+  if (module === "seal") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+        <path fill="currentColor" d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v10A1.5 1.5 0 0 1 19.5 17h-6l-3 3-3-3h-3A1.5 1.5 0 0 1 3 15.5v-10Zm3 2v2h12v-2H6Zm0 4v2h8v-2H6Z" />
+      </svg>
+    );
+  }
+  if (module === "otter") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+        <path fill="currentColor" d="M4 6h7v4H4V6Zm9 0h7v4h-7V6ZM4 14h7v4H4v-4Zm11-3 5 3.5-5 3.5V11Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path fill="currentColor" d="M12 3a4 4 0 0 1 4 4v10a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4Zm0 2a2 2 0 0 0-2 2v10a2 2 0 1 0 4 0V7a2 2 0 0 0-2-2ZM5 10.5a1 1 0 0 1 1 1v2a6 6 0 1 0 12 0v-2a1 1 0 1 1 2 0v2a8 8 0 0 1-7 7.94V23h-2v-1.56A8 8 0 0 1 4 13.5v-2a1 1 0 0 1 1-1Z" />
+    </svg>
+  );
+}
+
 export default function App() {
   return (
     <main className="min-h-screen bg-kymatics-bg text-kymatics-cream antialiased">
@@ -172,6 +216,7 @@ function Stack() {
       description:
         "React + TypeScript UI for fast voice prompt capture, live execution feedback, and queue control.",
       repo: "https://github.com/Unchained-Labs/seal",
+      docs: "https://seal-nine-sigma.vercel.app",
       accent: "mint"
     },
     {
@@ -180,6 +225,7 @@ function Stack() {
       description:
         "Rust service and library that queues jobs, runs Mistral Vibe in isolated workspaces, and streams runtime events.",
       repo: "https://github.com/Unchained-Labs/otter",
+      docs: "https://otter-psi.vercel.app",
       accent: "lavender"
     },
     {
@@ -188,6 +234,7 @@ function Stack() {
       description:
         "Python library + FastAPI service for STT/TTS workflows, Voxtral-first with provider abstractions and API clients.",
       repo: "https://github.com/Unchained-Labs/lavoix",
+      docs: "https://lavoix.vercel.app",
       accent: "mint"
     }
   ];
@@ -212,27 +259,46 @@ function Stack() {
                   : "border-kymatics-lavender/25 shadow-glow-lavender hover:border-kymatics-lavender/50 hover:shadow-glow-lavender"
               }`}
             >
-              <p
-                className={`font-display text-xs font-semibold uppercase tracking-[0.2em] ${
-                  module.accent === "mint" ? "text-kymatics-mint" : "text-kymatics-lavender"
-                }`}
-              >
-                {module.name}
-              </p>
+              <div className="inline-flex items-center gap-2">
+                <div className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-kymatics-lavender/30 bg-kymatics-bg/70">
+                  <ModuleIcon module={module.name} className="h-4 w-4 text-kymatics-cream" />
+                </div>
+                <p
+                  className={`font-display text-sm font-semibold uppercase tracking-[0.2em] ${
+                    module.accent === "mint" ? "text-kymatics-mint" : "text-kymatics-lavender"
+                  }`}
+                >
+                  {module.name}
+                </p>
+              </div>
               <h3 className="font-display mt-2 text-2xl font-semibold text-kymatics-cream">
                 {module.title}
               </h3>
               <p className="font-display mt-3 min-h-24 text-base leading-relaxed text-kymatics-muted">
                 {module.description}
               </p>
-              <a
-                href={module.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-display mt-5 inline-flex items-center text-sm font-medium text-kymatics-mint underline decoration-kymatics-mint/60 underline-offset-4 hover:text-kymatics-cream hover:decoration-kymatics-cream"
-              >
-                GitHub repository
-              </a>
+              <div className="mt-5 flex items-center gap-3">
+                <a
+                  href={module.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${module.name} GitHub`}
+                  title={`${module.name} GitHub`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-kymatics-lavender/30 text-kymatics-lavender transition-colors hover:border-kymatics-lavender hover:text-kymatics-cream"
+                >
+                  <GithubIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href={module.docs}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${module.name} Docs`}
+                  title={`${module.name} Docs`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-kymatics-mint/30 text-kymatics-mint transition-colors hover:border-kymatics-mint hover:text-kymatics-cream"
+                >
+                  <DocsIcon className="h-5 w-5" />
+                </a>
+              </div>
             </li>
           ))}
         </ul>
