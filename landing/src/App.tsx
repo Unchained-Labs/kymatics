@@ -5,6 +5,7 @@ export default function App() {
     <main className="min-h-screen bg-kymatics-bg text-kymatics-cream antialiased">
       <Hero />
       <Features />
+      <Stack />
       <Footer />
     </main>
   );
@@ -160,5 +161,82 @@ function Footer() {
         </p>
       </div>
     </footer>
+  );
+}
+
+function Stack() {
+  const modules = [
+    {
+      name: "seal",
+      title: "Voice-first frontend",
+      description:
+        "React + TypeScript UI for fast voice prompt capture, live execution feedback, and queue control.",
+      repo: "https://github.com/Unchained-Labs/seal",
+      accent: "mint"
+    },
+    {
+      name: "otter",
+      title: "Orchestration engine",
+      description:
+        "Rust service and library that queues jobs, runs Mistral Vibe in isolated workspaces, and streams runtime events.",
+      repo: "https://github.com/Unchained-Labs/otter",
+      accent: "lavender"
+    },
+    {
+      name: "lavoix",
+      title: "Speech services",
+      description:
+        "Python library + FastAPI service for STT/TTS workflows, Voxtral-first with provider abstractions and API clients.",
+      repo: "https://github.com/Unchained-Labs/lavoix",
+      accent: "mint"
+    }
+  ];
+
+  return (
+    <section className="border-t border-kymatics-lavender/20 bg-kymatics-bg px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="font-display mb-4 text-center text-3xl font-semibold tracking-tight text-kymatics-cream sm:text-4xl">
+          The stack
+        </h2>
+        <p className="font-display mx-auto mb-12 max-w-3xl text-center text-lg text-kymatics-muted">
+          Kymatics is built as composable voice-native modules, each focused on one layer of the
+          product pipeline.
+        </p>
+        <ul className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {modules.map((module) => (
+            <li
+              key={module.name}
+              className={`rounded-2xl border bg-kymatics-surface-elevated p-6 transition-all duration-300 hover:shadow-lg ${
+                module.accent === "mint"
+                  ? "border-kymatics-mint/25 shadow-glow-mint hover:border-kymatics-mint/50 hover:shadow-glow-mint"
+                  : "border-kymatics-lavender/25 shadow-glow-lavender hover:border-kymatics-lavender/50 hover:shadow-glow-lavender"
+              }`}
+            >
+              <p
+                className={`font-display text-xs font-semibold uppercase tracking-[0.2em] ${
+                  module.accent === "mint" ? "text-kymatics-mint" : "text-kymatics-lavender"
+                }`}
+              >
+                {module.name}
+              </p>
+              <h3 className="font-display mt-2 text-2xl font-semibold text-kymatics-cream">
+                {module.title}
+              </h3>
+              <p className="font-display mt-3 min-h-24 text-base leading-relaxed text-kymatics-muted">
+                {module.description}
+              </p>
+              <a
+                href={module.repo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-display mt-5 inline-flex items-center text-sm font-medium text-kymatics-mint underline decoration-kymatics-mint/60 underline-offset-4 hover:text-kymatics-cream hover:decoration-kymatics-cream"
+              >
+                GitHub repository
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
