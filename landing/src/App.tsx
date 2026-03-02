@@ -1,5 +1,27 @@
 import { LogoIcon } from "./components/LogoIcon";
 
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        fill="currentColor"
+        d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.17-1.11-1.48-1.11-1.48-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.9.82.09-.65.35-1.08.64-1.33-2.22-.25-4.56-1.1-4.56-4.9 0-1.09.4-1.98 1.03-2.67-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.7 9.7 0 0 1 5 0c1.9-1.29 2.74-1.02 2.74-1.02.55 1.38.2 2.4.1 2.65.64.69 1.02 1.58 1.02 2.67 0 3.8-2.34 4.65-4.57 4.89.36.3.68.9.68 1.82v2.7c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+      />
+    </svg>
+  );
+}
+
+function DocsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        fill="currentColor"
+        d="M6 3h8.5L19 7.5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm8 1.5V8h3.5L14 4.5ZM8 11h8v1.5H8V11Zm0 3h8v1.5H8V14Zm0 3h6v1.5H8V17Z"
+      />
+    </svg>
+  );
+}
+
 export default function App() {
   return (
     <main className="min-h-screen bg-kymatics-bg text-kymatics-cream antialiased">
@@ -172,6 +194,7 @@ function Stack() {
       description:
         "React + TypeScript UI for fast voice prompt capture, live execution feedback, and queue control.",
       repo: "https://github.com/Unchained-Labs/seal",
+      docs: "https://seal-nine-sigma.vercel.app",
       accent: "mint"
     },
     {
@@ -180,6 +203,7 @@ function Stack() {
       description:
         "Rust service and library that queues jobs, runs Mistral Vibe in isolated workspaces, and streams runtime events.",
       repo: "https://github.com/Unchained-Labs/otter",
+      docs: "https://otter-psi.vercel.app",
       accent: "lavender"
     },
     {
@@ -188,6 +212,7 @@ function Stack() {
       description:
         "Python library + FastAPI service for STT/TTS workflows, Voxtral-first with provider abstractions and API clients.",
       repo: "https://github.com/Unchained-Labs/lavoix",
+      docs: "https://lavoix.vercel.app",
       accent: "mint"
     }
   ];
@@ -225,17 +250,45 @@ function Stack() {
               <p className="font-display mt-3 min-h-24 text-base leading-relaxed text-kymatics-muted">
                 {module.description}
               </p>
-              <a
-                href={module.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-display mt-5 inline-flex items-center text-sm font-medium text-kymatics-mint underline decoration-kymatics-mint/60 underline-offset-4 hover:text-kymatics-cream hover:decoration-kymatics-cream"
-              >
-                GitHub repository
-              </a>
+              <div className="mt-5 flex items-center gap-4">
+                <a
+                  href={module.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-kymatics-lavender/30 px-3 py-1.5 text-sm text-kymatics-lavender transition-colors hover:border-kymatics-lavender hover:text-kymatics-cream"
+                >
+                  <GithubIcon className="h-4 w-4" />
+                  GitHub
+                </a>
+                <a
+                  href={module.docs}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-kymatics-mint/30 px-3 py-1.5 text-sm text-kymatics-mint transition-colors hover:border-kymatics-mint hover:text-kymatics-cream"
+                >
+                  <DocsIcon className="h-4 w-4" />
+                  Docs
+                </a>
+              </div>
             </li>
           ))}
         </ul>
+        <div className="mx-auto mt-12 max-w-3xl">
+          <h3 className="font-display mb-3 text-center text-xl font-semibold text-kymatics-cream sm:text-2xl">
+            Live demo
+          </h3>
+          <div className="overflow-hidden rounded-xl border border-kymatics-lavender/30 bg-kymatics-surface-elevated">
+            <iframe
+              className="aspect-video w-full"
+              src="https://www.youtube.com/embed/u1Y2QUWuG6k"
+              title="Kymatics demo video"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
