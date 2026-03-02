@@ -22,6 +22,28 @@ function DocsIcon({ className }: { className?: string }) {
   );
 }
 
+function ModuleIcon({ module, className }: { module: "seal" | "otter" | "lavoix"; className?: string }) {
+  if (module === "seal") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+        <path fill="currentColor" d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v10A1.5 1.5 0 0 1 19.5 17h-6l-3 3-3-3h-3A1.5 1.5 0 0 1 3 15.5v-10Zm3 2v2h12v-2H6Zm0 4v2h8v-2H6Z" />
+      </svg>
+    );
+  }
+  if (module === "otter") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+        <path fill="currentColor" d="M4 6h7v4H4V6Zm9 0h7v4h-7V6ZM4 14h7v4H4v-4Zm11-3 5 3.5-5 3.5V11Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path fill="currentColor" d="M12 3a4 4 0 0 1 4 4v10a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4Zm0 2a2 2 0 0 0-2 2v10a2 2 0 1 0 4 0V7a2 2 0 0 0-2-2ZM5 10.5a1 1 0 0 1 1 1v2a6 6 0 1 0 12 0v-2a1 1 0 1 1 2 0v2a8 8 0 0 1-7 7.94V23h-2v-1.56A8 8 0 0 1 4 13.5v-2a1 1 0 0 1 1-1Z" />
+    </svg>
+  );
+}
+
 export default function App() {
   return (
     <main className="min-h-screen bg-kymatics-bg text-kymatics-cream antialiased">
@@ -237,58 +259,49 @@ function Stack() {
                   : "border-kymatics-lavender/25 shadow-glow-lavender hover:border-kymatics-lavender/50 hover:shadow-glow-lavender"
               }`}
             >
-              <p
-                className={`font-display text-xs font-semibold uppercase tracking-[0.2em] ${
-                  module.accent === "mint" ? "text-kymatics-mint" : "text-kymatics-lavender"
-                }`}
-              >
-                {module.name}
-              </p>
+              <div className="inline-flex items-center gap-2">
+                <div className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-kymatics-lavender/30 bg-kymatics-bg/70">
+                  <ModuleIcon module={module.name} className="h-4 w-4 text-kymatics-cream" />
+                </div>
+                <p
+                  className={`font-display text-sm font-semibold uppercase tracking-[0.2em] ${
+                    module.accent === "mint" ? "text-kymatics-mint" : "text-kymatics-lavender"
+                  }`}
+                >
+                  {module.name}
+                </p>
+              </div>
               <h3 className="font-display mt-2 text-2xl font-semibold text-kymatics-cream">
                 {module.title}
               </h3>
               <p className="font-display mt-3 min-h-24 text-base leading-relaxed text-kymatics-muted">
                 {module.description}
               </p>
-              <div className="mt-5 flex items-center gap-4">
+              <div className="mt-5 flex items-center gap-3">
                 <a
                   href={module.repo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md border border-kymatics-lavender/30 px-3 py-1.5 text-sm text-kymatics-lavender transition-colors hover:border-kymatics-lavender hover:text-kymatics-cream"
+                  aria-label={`${module.name} GitHub`}
+                  title={`${module.name} GitHub`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-kymatics-lavender/30 text-kymatics-lavender transition-colors hover:border-kymatics-lavender hover:text-kymatics-cream"
                 >
-                  <GithubIcon className="h-4 w-4" />
-                  GitHub
+                  <GithubIcon className="h-5 w-5" />
                 </a>
                 <a
                   href={module.docs}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md border border-kymatics-mint/30 px-3 py-1.5 text-sm text-kymatics-mint transition-colors hover:border-kymatics-mint hover:text-kymatics-cream"
+                  aria-label={`${module.name} Docs`}
+                  title={`${module.name} Docs`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-kymatics-mint/30 text-kymatics-mint transition-colors hover:border-kymatics-mint hover:text-kymatics-cream"
                 >
-                  <DocsIcon className="h-4 w-4" />
-                  Docs
+                  <DocsIcon className="h-5 w-5" />
                 </a>
               </div>
             </li>
           ))}
         </ul>
-        <div className="mx-auto mt-12 max-w-3xl">
-          <h3 className="font-display mb-3 text-center text-xl font-semibold text-kymatics-cream sm:text-2xl">
-            Live demo
-          </h3>
-          <div className="overflow-hidden rounded-xl border border-kymatics-lavender/30 bg-kymatics-surface-elevated">
-            <iframe
-              className="aspect-video w-full"
-              src="https://www.youtube.com/embed/u1Y2QUWuG6k"
-              title="Kymatics demo video"
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </div>
-        </div>
       </div>
     </section>
   );
