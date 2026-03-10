@@ -27,25 +27,7 @@ Kymatics is an intelligent synthesis engine that transforms spoken intent into i
 - **Rust** (stable toolchain)
 - **Python** 3.x (for pre-commit)
 
-## Quick start
-
-```bash
-# Otter (backend)
-cd otter && cargo run
-
-# Lavoix (speech service)
-cd lavoix && python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]" && lavoix-server
-
-# Seal (Builder Board)
-cd seal && npm install && npm run dev
-
-# Landing (marketing site)
-cd landing && npm install && npm run dev
-```
-
-To change the URL of the **START NOW** button, copy `landing/.env.example` to `landing/.env` and set `VITE_START_NOW_URL` (default: `http://localhost:3000/`).
-
-## Run with Docker
+## Run
 
 From the repo root, start the full orchestration stack (Postgres, Redis, Lavoix, Otter server + worker, Seal):
 
