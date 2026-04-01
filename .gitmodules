@@ -1,12 +1,9 @@
 [submodule "seal"]
 	path = seal
 	url = git@github.com:Unchained-Labs/seal.git
-	branch = release/1.0.0
 [submodule "otter"]
 	path = otter
 	url = git@github.com:Unchained-Labs/otter.git
-	branch = release/1.0.0
 [submodule "lavoix"]
 	path = lavoix
 	url = git@github.com:Unchained-Labs/lavoix.git
-	branch = release/1.0.0
