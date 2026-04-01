@@ -67,7 +67,9 @@ function Hero() {
               className="h-auto w-full max-w-[640px] sm:max-w-[760px] md:max-w-[900px]"
             />
             <a
-              href={import.meta.env.VITE_START_NOW_URL ?? "http://localhost:3000/"}
+              href={import.meta.env.VITE_START_NOW_URL ?? "https://github.com/Unchained-Labs/kymatics"}
+              target="_blank"
+              rel="noopener noreferrer"
               className="font-display inline-flex items-center justify-center rounded-lg border-2 border-kymatics-mint bg-kymatics-mint/10 px-8 py-3 text-lg font-semibold tracking-wide text-kymatics-mint transition-colors hover:bg-kymatics-mint/20"
             >
               START NOW
