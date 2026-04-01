@@ -71,3 +71,8 @@ cp .env.example .env
   - `otter/docs/`
   - `seal/README.md`
   - `lavoix/README.md`
+
+## Submodule versioning (tags)
+
+- Submodules are pinned by commit (gitlink) in the parent repo.
+- We track the intended **tags** for each submodule in `SUBMODULE_VERSIONS.md`.
