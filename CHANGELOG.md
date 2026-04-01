@@ -2,7 +2,7 @@
 
 All notable changes to the Kymatics stack release will be documented in this file.
 
-## [Unreleased]
+## [Unreleased]\n\n## [1.0.1] - 2026-04-01
 
 ## [1.0.0] - 2026-04-01
 
