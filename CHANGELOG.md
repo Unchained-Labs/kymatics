@@ -2,7 +2,10 @@
 
 All notable changes to the Kymatics stack release will be documented in this file.
 
-## [Unreleased]\n\n## [1.0.1] - 2026-04-01
+## [Unreleased]
+
+### Added
+- Persistent runtime app registry (workspace + job runtime instances) and shutdown-all endpoint for clean runtime shutdown.
 
 ## [1.0.0] - 2026-04-01
 
