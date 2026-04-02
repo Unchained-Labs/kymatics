@@ -6,6 +6,7 @@ All notable changes to the Kymatics stack release will be documented in this fil
 
 ### Added
 - Persistent runtime app registry (workspace + job runtime instances) and shutdown-all endpoint for clean runtime shutdown.
+- Self-contained project guardrails for runtime `working_directory` and job `project_path`; workspace root marker file for safe cleanup defaults.
 
 ## [1.0.0] - 2026-04-01
 
