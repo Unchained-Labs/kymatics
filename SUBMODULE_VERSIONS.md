@@ -13,4 +13,3 @@ So for releases we do two things:
 - `seal`: `v1.0.0`
 - `otter`: `v1.0.1`
 - `lavoix`: `v1.0.0`
-
