@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+# Note: this repository's submodules (otter, seal, lavoix) use SSH remotes and
+# are not checked out here, so jobs cover only the umbrella repo's own content.
+# Each service is validated by its own CI.
+
 jobs:
   landing:
     runs-on: ubuntu-latest
@@ -16,12 +20,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "npm"
+          cache-dependency-path: landing/package-lock.json
 
       - name: Install landing dependencies
-        run: cd landing && npm ci
+        working-directory: landing
+        run: npm ci
 
       - name: Lint landing
-        run: cd landing && npm run lint
+        working-directory: landing
+        run: npm run lint
 
       - name: Build landing
-        run: cd landing && npm run build
+        working-directory: landing
+        run: npm run build
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci
+
+      # Also guards the committed promo video: the home page embeds it, and a
+      # missing asset fails this build rather than shipping a broken page.
+      - name: Build docs
+        working-directory: docs
+        run: npm run build
