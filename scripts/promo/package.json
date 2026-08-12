@@ -1,0 +1,16 @@
+{
+  "name": "kymatics-promo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Records the Kymatics promo video. Only needed to regenerate the committed video.",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "record": "node record-promo.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

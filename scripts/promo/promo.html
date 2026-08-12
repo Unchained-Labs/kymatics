@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kymatics — promo</title>
+    <style>
+      /*
+       * Source scene for the Kymatics promo video.
+       *
+       * Self-contained by design: no network fonts or assets, because this is
+       * rendered by a headless browser during recording. Palette is kept in
+       * sync with landing/tailwind.config.ts.
+       *
+       * The timeline is driven from JS (see the SCENES table at the bottom) so
+       * scene boundaries stay readable and adjustable. Recording duration is
+       * derived from the same table by record-promo.mjs.
+       */
+      :root {
+        --bg: #00052b;
+        --surface: #0a0a3a;
+        --elevated: #12124a;
+        --mint: #4bffca;
+        --purple: #8024e7;
+        --lavender: #b187ff;
+        --cream: #e8e6f0;
+        --muted: #9b97b8;
+        --sans: "Liberation Sans", Arial, system-ui, sans-serif;
+        --mono: "Liberation Mono", "DejaVu Sans Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--cream);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Ambient background: two slow-drifting brand glows. */
+      .glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .glow-a {
+        width: 620px;
+        height: 620px;
+        background: var(--purple);
+        top: -220px;
+        left: -160px;
+        animation: drift-a 24s ease-in-out infinite alternate;
+      }
+      .glow-b {
+        width: 560px;
+        height: 560px;
+        background: var(--mint);
+        bottom: -240px;
+        right: -140px;
+        opacity: 0.22;
+        animation: drift-b 20s ease-in-out infinite alternate;
+      }
+      @keyframes drift-a {
+        to {
+          transform: translate3d(140px, 90px, 0) scale(1.15);
+        }
+      }
+      @keyframes drift-b {
+        to {
+          transform: translate3d(-120px, -70px, 0) scale(1.1);
+        }
+      }
+
+      .scene {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 700ms ease, transform 700ms ease;
+        pointer-events: none;
+      }
+      .scene.active {
+        opacity: 1;
+        transform: none;
+      }
+      /* Outgoing scenes lift away rather than dropping back down. */
+      .scene.past {
+        opacity: 0;
+        transform: translateY(-18px);
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        text-align: center;
+      }
+
+      /* ---------- Scene 1: title ---------- */
+      .wordmark {
+        font-size: 112px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        background: linear-gradient(100deg, var(--lavender), var(--mint));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .tagline {
+        font-size: 27px;
+        color: var(--muted);
+        letter-spacing: 0.01em;
+      }
+
+      /* Cymatic rings behind the wordmark — the name is the concept. */
+      .rings {
+        position: absolute;
+        width: 620px;
+        height: 620px;
+        display: grid;
+        place-items: center;
+      }
+      .ring {
+        position: absolute;
+        border: 1px solid var(--lavender);
+        border-radius: 50%;
+        opacity: 0;
+        width: 120px;
+        height: 120px;
+      }
+      .active .ring {
+        animation: ripple 3.6s ease-out infinite;
+      }
+      .ring:nth-child(2) {
+        animation-delay: 0.9s;
+      }
+      .ring:nth-child(3) {
+        animation-delay: 1.8s;
+      }
+      .ring:nth-child(4) {
+        animation-delay: 2.7s;
+      }
+      @keyframes ripple {
+        0% {
+          opacity: 0.55;
+          transform: scale(0.3);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(4.6);
+        }
+      }
+
+      /* ---------- Shared panel chrome ---------- */
+      .panel {
+        background: rgba(10, 10, 58, 0.78);
+        border: 1px solid rgba(177, 135, 255, 0.22);
+        border-radius: 16px;
+        box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(6px);
+      }
+      .label {
+        font-size: 15px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--mint);
+        font-weight: 700;
+      }
+      .headline {
+        font-size: 42px;
+        font-weight: 700;
+        letter-spacing: -0.015em;
+      }
+
+      /* ---------- Scene 2: voice capture ---------- */
+      .mic-panel {
+        width: 880px;
+        padding: 44px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+      }
+      .wave {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 92px;
+      }
+      .bar {
+        width: 7px;
+        border-radius: 4px;
+        background: linear-gradient(180deg, var(--mint), var(--lavender));
+        height: 14px;
+      }
+      .active .bar {
+        animation: pulse 1.05s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          height: 12px;
+          opacity: 0.55;
+        }
+        50% {
+          height: var(--h, 50px);
+          opacity: 1;
+        }
+      }
+      .transcript {
+        font-size: 30px;
+        line-height: 1.42;
+        min-height: 84px;
+        text-align: left;
+        color: var(--cream);
+      }
+      .caret {
+        display: inline-block;
+        width: 3px;
+        height: 30px;
+        background: var(--mint);
+        vertical-align: -5px;
+        margin-left: 3px;
+        animation: blink 1s steps(1) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .push-hint {
+        font-family: var(--mono);
+        font-size: 15px;
+        color: var(--muted);
+      }
+      kbd {
+        background: var(--elevated);
+        border: 1px solid rgba(177, 135, 255, 0.3);
+        border-radius: 5px;
+        padding: 3px 8px;
+        font-family: var(--mono);
+        font-size: 14px;
+      }
+
+      /* ---------- Scene 3 + 4: board ---------- */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 300px);
+        gap: 22px;
+      }
+      .column {
+        padding: 18px;
+        min-height: 300px;
+      }
+      .column h3 {
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .card {
+        background: var(--elevated);
+        border: 1px solid rgba(177, 135, 255, 0.2);
+        border-radius: 11px;
+        padding: 15px 16px;
+        text-align: left;
+        font-size: 16px;
+        line-height: 1.4;
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+        transition: opacity 500ms ease, transform 500ms ease;
+      }
+      .card.show {
+        opacity: 1;
+        transform: none;
+      }
+      .card .meta {
+        margin-top: 11px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--muted);
+        flex: none;
+      }
+      .dot.queued {
+        background: var(--lavender);
+      }
+      .dot.running {
+        background: var(--mint);
+        animation: throb 1.2s ease-in-out infinite;
+      }
+      .dot.done {
+        background: var(--mint);
+      }
+      @keyframes throb {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      /* Placeholders are part of the board's resting state, so unlike real
+         cards they are visible immediately rather than animating in. */
+      .card.ghost {
+        border-style: dashed;
+        border-color: rgba(177, 135, 255, 0.16);
+        background: transparent;
+        color: var(--muted);
+        font-size: 14px;
+        opacity: 1;
+        transform: none;
+      }
+
+      /* ---------- Scene 4: streaming log ---------- */
+      .log {
+        width: 1000px;
+        padding: 22px 26px;
+        font-family: var(--mono);
+        font-size: 16px;
+        line-height: 1.75;
+        text-align: left;
+        /* Tall enough for every LOG_LINES entry: clipping the closing
+           "preview-url registered" line would cut the payoff. */
+        height: 360px;
+        overflow: hidden;
+      }
+      .log .line {
+        opacity: 0;
+        transform: translateX(-8px);
+        transition: opacity 300ms ease, transform 300ms ease;
+        white-space: nowrap;
+      }
+      .log .line.show {
+        opacity: 1;
+        transform: none;
+      }
+      .log .ok {
+        color: var(--mint);
+      }
+      .log .dim {
+        color: var(--muted);
+      }
+
+      /* ---------- Scene 5: delivered ---------- */
+      .browser {
+        width: 880px;
+        overflow: hidden;
+      }
+      .chrome {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 13px 16px;
+        background: rgba(18, 18, 74, 0.9);
+        border-bottom: 1px solid rgba(177, 135, 255, 0.18);
+      }
+      .chrome .tl {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #3a3a6a;
+      }
+      .url {
+        margin-left: 12px;
+        font-family: var(--mono);
+        font-size: 14px;
+        color: var(--mint);
+        background: rgba(75, 255, 202, 0.09);
+        border: 1px solid rgba(75, 255, 202, 0.22);
+        border-radius: 6px;
+        padding: 5px 12px;
+      }
+      .viewport {
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        background: linear-gradient(160deg, rgba(18, 18, 74, 0.55), transparent);
+        min-height: 260px;
+      }
+      .skeleton {
+        height: 16px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, rgba(177, 135, 255, 0.28), rgba(75, 255, 202, 0.16));
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .tile {
+        height: 88px;
+        border-radius: 10px;
+        border: 1px solid rgba(177, 135, 255, 0.22);
+        background: rgba(10, 10, 58, 0.75);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(75, 255, 202, 0.4);
+        background: rgba(75, 255, 202, 0.1);
+        color: var(--mint);
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      /* ---------- Scene 6: close ---------- */
+      .stat-row {
+        display: flex;
+        gap: 56px;
+        margin-top: 10px;
+      }
+      .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .stat .n {
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--mint);
+      }
+      .stat .k {
+        font-size: 14px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
+
+    <!-- 1. Title -->
+    <section class="scene" id="s1">
+      <div class="rings">
+        <span class="ring"></span><span class="ring"></span><span class="ring"></span
+        ><span class="ring"></span>
+      </div>
+      <div class="stack">
+        <div class="wordmark">Kymatics</div>
+        <div class="tagline">Speak intent. Get running software.</div>
+      </div>
+    </section>
+
+    <!-- 2. Voice capture -->
+    <section class="scene" id="s2">
+      <div class="stack">
+        <div class="label">01 — Say it</div>
+        <div class="panel mic-panel">
+          <div class="wave" id="wave"></div>
+          <div class="transcript" id="transcript"></div>
+          <div class="push-hint">Hold <kbd>Shift</kbd> + <kbd>Space</kbd> to talk</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Queued on the board -->
+    <section class="scene" id="s3">
+      <div class="stack">
+        <div class="label">02 — It becomes a job</div>
+        <div class="board">
+          <div class="panel column">
+            <h3>Todo</h3>
+            <div class="card" id="c-todo">
+              Sales dashboard with three stat cards and a sortable table
+              <div class="meta"><span class="dot queued"></span> Queued · rank 1</div>
+            </div>
+          </div>
+          <div class="panel column">
+            <h3>Running</h3>
+            <div class="card ghost">Nothing running</div>
+          </div>
+          <div class="panel column">
+            <h3>Done</h3>
+            <div class="card ghost">Nothing yet</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Streaming execution -->
+    <section class="scene" id="s4">
+      <div class="stack">
+        <div class="label">03 — Watch it build</div>
+        <div class="panel log" id="log"></div>
+      </div>
+    </section>
+
+    <!-- 5. Delivered -->
+    <section class="scene" id="s5">
+      <div class="stack">
+        <div class="label">04 — It's actually running</div>
+        <div class="panel browser">
+          <div class="chrome">
+            <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+            <span class="url">http://localhost:4173</span>
+          </div>
+          <div class="viewport">
+            <div class="skeleton" style="width: 42%"></div>
+            <div class="tiles">
+              <div class="tile"></div>
+              <div class="tile"></div>
+              <div class="tile"></div>
+            </div>
+            <div class="skeleton" style="width: 88%; opacity: 0.5"></div>
+            <div class="skeleton" style="width: 70%; opacity: 0.35"></div>
+          </div>
+        </div>
+        <div class="badge">Preview URL registered — verified reachable</div>
+      </div>
+    </section>
+
+    <!-- 6. Close -->
+    <section class="scene" id="s6">
+      <div class="stack">
+        <div class="wordmark" style="font-size: 84px">Kymatics</div>
+        <div class="tagline">From a sentence to a container, without leaving the board.</div>
+        <div class="stat-row">
+          <div class="stat"><span class="n">Voice</span><span class="k">first input</span></div>
+          <div class="stat"><span class="n">Docker</span><span class="k">every build</span></div>
+          <div class="stat"><span class="n">Measured</span><span class="k">delivery rate</span></div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // Deterministic bar heights: a fixed pattern records identically every
+      // run, which keeps the committed video reproducible.
+      const WAVE_HEIGHTS = [
+        22, 38, 56, 74, 62, 44, 80, 58, 34, 68, 86, 52, 40, 72, 60, 30, 78, 46, 64, 36,
+        50, 82, 42, 66, 28, 70, 54, 48, 76, 32,
+      ];
+      const wave = document.getElementById("wave");
+      WAVE_HEIGHTS.forEach((height, index) => {
+        const bar = document.createElement("span");
+        bar.className = "bar";
+        bar.style.setProperty("--h", height + "px");
+        bar.style.animationDelay = (index * 0.045).toFixed(3) + "s";
+        wave.appendChild(bar);
+      });
+
+      const TRANSCRIPT =
+        "Build a React dashboard with three stat cards and a sortable table of sales data, and run it in Docker.";
+
+      const LOG_LINES = [
+        ["$ vibe --prompt \"Build a React dashboard…\"", "dim"],
+        ["creating project subfolder  sales-dashboard/", ""],
+        ["writing  src/App.tsx", ""],
+        ["writing  src/components/StatCard.tsx", ""],
+        ["writing  src/components/SalesTable.tsx", ""],
+        ["writing  Dockerfile", ""],
+        ["$ docker build -t sales-dashboard .", "dim"],
+        ["=> exporting layers                        done", "ok"],
+        ["$ docker run -d -p 4173:80 sales-dashboard", "dim"],
+        ["health check  200 OK on :4173", "ok"],
+        ["POST /v1/jobs/{id}/preview-url  → registered", "ok"],
+      ];
+
+      function typeInto(element, text, totalMs) {
+        element.textContent = "";
+        const caret = document.createElement("span");
+        caret.className = "caret";
+        element.appendChild(caret);
+        const step = totalMs / text.length;
+        let index = 0;
+        const timer = setInterval(() => {
+          index += 1;
+          caret.remove();
+          element.textContent = text.slice(0, index);
+          element.appendChild(caret);
+          if (index >= text.length) clearInterval(timer);
+        }, step);
+      }
+
+      function streamLog(container, lines, totalMs) {
+        container.innerHTML = "";
+        const step = totalMs / lines.length;
+        lines.forEach(([text, kind], index) => {
+          const line = document.createElement("div");
+          line.className = "line" + (kind ? " " + kind : "");
+          line.textContent = text;
+          container.appendChild(line);
+          setTimeout(() => line.classList.add("show"), index * step);
+        });
+      }
+
+      // Scene table: [element id, duration in ms, optional on-enter hook].
+      // record-promo.mjs imports the total to size the recording.
+      const SCENES = [
+        ["s1", 5000],
+        [
+          "s2",
+          8000,
+          () => typeInto(document.getElementById("transcript"), TRANSCRIPT, 4200),
+        ],
+        [
+          "s3",
+          4500,
+          () =>
+            setTimeout(() => document.getElementById("c-todo").classList.add("show"), 500),
+        ],
+        ["s4", 9500, () => streamLog(document.getElementById("log"), LOG_LINES, 7200)],
+        ["s5", 6500],
+        ["s6", 6000],
+      ];
+
+      window.KYMATICS_PROMO_DURATION_MS = SCENES.reduce((sum, s) => sum + s[1], 0);
+
+      let elapsed = 0;
+      SCENES.forEach(([id, duration, onEnter], index) => {
+        const element = document.getElementById(id);
+        setTimeout(() => {
+          if (index > 0) {
+            const previous = document.getElementById(SCENES[index - 1][0]);
+            previous.classList.remove("active");
+            previous.classList.add("past");
+          }
+          element.classList.add("active");
+          if (onEnter) onEnter();
+        }, elapsed);
+        elapsed += duration;
+      });
+
+      // Signals the recorder that the timeline has finished.
+      setTimeout(() => {
+        window.KYMATICS_PROMO_DONE = true;
+      }, elapsed);
+    </script>
+  </body>
+</html>
