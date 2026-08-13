@@ -3,20 +3,36 @@
 Generates the Kymatics promo video shown on the docs home page.
 
 The rendered output is **committed** to `docs/public/media/`, so neither the
-docs build nor CI needs Playwright. You only run this when the promo itself
-changes.
-
-## Files
+docs build nor CI needs Playwright or ffmpeg. You only run this when the promo
+itself changes.
 
 | File | Purpose |
 |---|---|
 | `promo.html` | The scene. Self-contained: no network fonts or assets. |
-| `record-promo.mjs` | Drives a headless browser and writes the video + poster. |
+| `record-promo.mjs` | Renders each frame, then encodes them with ffmpeg. |
 
 Outputs:
 
-- `docs/public/media/kymatics-promo.webm` — 1280×720 VP8, ~40s, ~2.7 MB
-- `docs/public/media/kymatics-promo-poster.png` — first-frame poster
+- `docs/public/media/kymatics-promo.mp4` — 1920×1080, 60 fps, ~53 s, H.264
+- `docs/public/media/kymatics-promo-poster.png` — poster frame
+
+## Why frames instead of screen recording
+
+The scene is rendered **deterministically**, one frame at a time, rather than
+captured in real time. The page exposes `window.PROMO.renderFrame(t)`; the
+recorder steps `t` forward by exactly `1/fps`, screenshots, and hands the
+sequence to ffmpeg.
+
+Real-time capture ties video quality to how fast the recording machine happens
+to be, and drops frames under load. Rendering frame by frame means:
+
+- **Smooth** — a true 60 fps with no dropped or duplicated frames.
+- **Reproducible** — the same scene produces an equivalent video every run,
+  on any machine, at any speed.
+- **Higher quality** — 1080p at whatever encode settings you want, decoupled
+  from capture performance.
+
+The cost is wall-clock: ~3200 frames takes a few minutes to render.
 
 ## Regenerating
 
@@ -26,49 +42,55 @@ npm install
 npm run record
 ```
 
-If the machine already has a Chromium build (CI images, dev sandboxes), point at
-it instead of downloading another:
+If the machine already has Chromium and ffmpeg (CI images, dev sandboxes),
+point at them instead of downloading more:
 
 ```bash
-CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run record
+CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
+FFMPEG_PATH=/opt/pw-browsers/ffmpeg-1011/ffmpeg-linux \
+npm run record
 ```
 
 ## Editing the scene
 
-Scenes live in the `SCENES` table at the bottom of `promo.html`:
+The timeline is the `SCENES` table near the bottom of `promo.html`:
 
 ```js
 const SCENES = [
-  ['s1', 5000],
-  ['s2', 8000, () => typeInto(...)],
+  { dur: 5200, render: renderTitle },
+  { dur: 8200, render: renderVoice },
   ...
 ]
 ```
 
-Each entry is `[element id, duration in ms, optional on-enter hook]`. The
-recorder reads the total duration back from the page rather than keeping its own
-copy, so changing a duration here is enough — there is no second number to keep
-in sync.
+Each entry is `{ duration in ms, render function }`. Every render function
+receives `(p, ms)` — progress through its own scene, and local elapsed
+milliseconds — and sets **every** property it controls from those two numbers.
+Cross-fades between scenes are handled centrally.
 
-Two things to preserve when editing:
+The recorder reads the total duration and the frame rate back from the page, so
+changing a scene length here is the only edit needed — there is no second number
+to keep in sync.
 
-- **Determinism.** The waveform heights are a fixed table, not random, so
-  re-recording an unchanged scene produces an equivalent video. Avoid
-  `Math.random()`.
-- **Fit.** `.log` has a fixed height sized to hold every `LOG_LINES` entry. If
-  you add lines, raise the height or the closing "preview-url registered" line
-  gets clipped.
+Two rules to preserve when editing:
 
-## Preview without recording
+- **No self-driven animation.** CSS transitions and keyframes are disabled
+  globally (`animation: none !important`). If a property changes over time, it
+  must be computed from `ms` in a render function, or it will not appear.
+- **No randomness.** `Math.random()` and wall-clock time would make the output
+  differ between runs. The waveform and sparkline use layered sines seeded by
+  element index instead.
+
+## Preview without rendering
 
 ```bash
 python3 -m http.server 8000
-# open http://localhost:8000/promo.html
+# then, in the browser console:
+#   PROMO.renderFrame(23000)   // jump to 23s
 ```
 
 ## Fonts
 
-The scene uses Liberation Sans / Liberation Mono, which are present on the
-recording images used here. It deliberately avoids web fonts so recording never
-depends on network access — meaning output can differ slightly across machines
-with different font sets.
+The scene uses Liberation Sans / Liberation Mono and deliberately avoids web
+fonts so rendering never depends on network access. Output can therefore differ
+slightly across machines with different font sets.
