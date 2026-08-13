@@ -36,20 +36,32 @@ The cost is wall-clock: ~3200 frames takes a few minutes to render.
 
 ## Regenerating
 
+Needs a **system ffmpeg built with libx264**:
+
+```bash
+apt-get install ffmpeg     # or: brew install ffmpeg
+```
+
+::: warning The Playwright-bundled ffmpeg will not work
+Playwright ships an ffmpeg, but it is built with `--disable-everything` and
+enables only VP8/WebM — no libx264, no mp4 muxer. The recorder checks for
+libx264 up front and fails immediately rather than after rendering every frame.
+:::
+
 ```bash
 cd scripts/promo
 npm install
 npm run record
 ```
 
-If the machine already has Chromium and ffmpeg (CI images, dev sandboxes),
-point at them instead of downloading more:
+If the machine already has a Chromium build, point at it instead of downloading
+another:
 
 ```bash
-CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
-FFMPEG_PATH=/opt/pw-browsers/ffmpeg-1011/ffmpeg-linux \
-npm run record
+CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run record
 ```
+
+Set `FFMPEG_PATH` if your ffmpeg is not on `PATH`.
 
 ## Editing the scene
 

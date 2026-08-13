@@ -15,9 +15,11 @@
  *   npm install
  *   npm run record
  *
- * On machines with a pre-installed Chromium and ffmpeg (CI images, sandboxes):
- *   CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
- *   FFMPEG_PATH=/opt/pw-browsers/ffmpeg-1011/ffmpeg-linux npm run record
+ * Requires a system ffmpeg built with libx264 (apt-get install ffmpeg).
+ * The Playwright-bundled ffmpeg will not work — it is WebM-only.
+ *
+ * On machines with a pre-installed Chromium:
+ *   CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run record
  */
 
 import { chromium } from 'playwright'
@@ -39,12 +41,47 @@ const FRAME_DIR = join(HERE, '.frames')
 // than frame zero.
 const POSTER_AT_MS = 2600
 
+/**
+ * Resolves an ffmpeg that can actually produce H.264 MP4.
+ *
+ * Note the Playwright-bundled ffmpeg is NOT usable here: it is built with
+ * `--disable-everything` and only enables VP8/WebM, so it has neither libx264
+ * nor an mp4 muxer. A system ffmpeg is required.
+ */
 function resolveFfmpeg() {
-  if (process.env.FFMPEG_PATH) return process.env.FFMPEG_PATH
-  // Playwright ships an ffmpeg build; reuse it rather than requiring a system one.
-  const bundled = '/opt/pw-browsers/ffmpeg-1011/ffmpeg-linux'
-  if (existsSync(bundled)) return bundled
-  return 'ffmpeg'
+  return process.env.FFMPEG_PATH || 'ffmpeg'
+}
+
+/** Fails early and clearly rather than after a ten-minute frame render. */
+async function assertCanEncodeMp4(ffmpeg) {
+  let encoders = ''
+  try {
+    encoders = await capture(ffmpeg, ['-hide_banner', '-encoders'])
+  } catch (error) {
+    throw new Error(
+      `could not run ffmpeg at "${ffmpeg}".\n` +
+        `Install it (apt-get install ffmpeg / brew install ffmpeg) or set FFMPEG_PATH.\n` +
+        `${error.message}`
+    )
+  }
+  if (!encoders.includes('libx264')) {
+    throw new Error(
+      `the ffmpeg at "${ffmpeg}" has no libx264 encoder, so it cannot write MP4.\n` +
+        `The Playwright-bundled ffmpeg is WebM-only — point FFMPEG_PATH at a full build.`
+    )
+  }
+}
+
+function capture(command, args) {
+  return new Promise((resolvePromise, reject) => {
+    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'ignore'] })
+    let stdout = ''
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk.toString()
+    })
+    child.on('error', reject)
+    child.on('close', () => resolvePromise(stdout))
+  })
 }
 
 function run(command, args) {
@@ -66,6 +103,11 @@ async function main() {
   if (!existsSync(SCENE)) {
     throw new Error(`scene not found: ${SCENE}`)
   }
+
+  // Checked before rendering: discovering a missing encoder after ten minutes
+  // of frame rendering is a bad way to find out.
+  const ffmpeg = resolveFfmpeg()
+  await assertCanEncodeMp4(ffmpeg)
 
   await rm(FRAME_DIR, { recursive: true, force: true })
   await mkdir(FRAME_DIR, { recursive: true })
@@ -118,7 +160,6 @@ async function main() {
   }
   await browser.close()
 
-  const ffmpeg = resolveFfmpeg()
   console.log(`encoding with ${ffmpeg}`)
   await rm(OUTPUT_VIDEO, { force: true })
   await run(ffmpeg, [

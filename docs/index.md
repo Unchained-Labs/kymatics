@@ -33,12 +33,13 @@ features:
 
 <figure class="kymatics-promo">
   <video
-    src="/media/kymatics-promo.webm"
+    src="/media/kymatics-promo.mp4"
     poster="/media/kymatics-promo-poster.png"
     controls
     muted
     loop
     playsinline
+    preload="metadata"
   ></video>
   <figcaption>
     From a spoken prompt to a running, reachable app.
