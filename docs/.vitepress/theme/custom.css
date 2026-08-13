@@ -1,0 +1,95 @@
+/*
+ * Kymatics documentation theme.
+ * Palette is kept in sync with `landing/tailwind.config.ts` so the docs site,
+ * the marketing landing page, and the promo video read as one product.
+ */
+
+:root {
+  --kymatics-bg: #00052b;
+  --kymatics-surface: #0a0a3a;
+  --kymatics-surface-elevated: #12124a;
+  --kymatics-mint: #4bffca;
+  --kymatics-purple: #8024e7;
+  --kymatics-lavender: #b187ff;
+  --kymatics-cream: #e8e6f0;
+  --kymatics-muted: #9b97b8;
+
+  --vp-c-brand-1: #6b21c9;
+  --vp-c-brand-2: #8024e7;
+  --vp-c-brand-3: #b187ff;
+  --vp-c-brand-soft: rgba(128, 36, 231, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(
+    120deg,
+    var(--kymatics-purple) 0%,
+    var(--kymatics-lavender) 45%,
+    var(--kymatics-mint) 100%
+  );
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    rgba(128, 36, 231, 0.55),
+    rgba(75, 255, 202, 0.4)
+  );
+  --vp-home-hero-image-filter: blur(48px);
+}
+
+.dark {
+  --vp-c-brand-1: var(--kymatics-mint);
+  --vp-c-brand-2: var(--kymatics-lavender);
+  --vp-c-brand-3: var(--kymatics-purple);
+  --vp-c-brand-soft: rgba(75, 255, 202, 0.12);
+
+  --vp-c-bg: var(--kymatics-bg);
+  --vp-c-bg-alt: #01031f;
+  --vp-c-bg-soft: var(--kymatics-surface);
+  --vp-c-bg-elv: var(--kymatics-surface-elevated);
+
+  --vp-c-text-1: var(--kymatics-cream);
+  --vp-c-text-2: var(--kymatics-muted);
+
+  --vp-c-divider: rgba(177, 135, 255, 0.16);
+  --vp-c-gutter: rgba(177, 135, 255, 0.16);
+}
+
+.VPDoc {
+  max-width: 1280px;
+}
+
+.VPNavBarTitle .title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+  letter-spacing: 0.01em;
+}
+
+.vp-doc a {
+  text-underline-offset: 2px;
+}
+
+/* Promo video embed used on the docs home page. */
+.kymatics-promo {
+  margin: 2.5rem auto 0;
+  max-width: 960px;
+}
+
+.kymatics-promo video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(177, 135, 255, 0.25);
+  box-shadow: 0 0 48px -12px rgba(128, 36, 231, 0.45);
+  background: var(--kymatics-bg);
+}
+
+.kymatics-promo figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+}

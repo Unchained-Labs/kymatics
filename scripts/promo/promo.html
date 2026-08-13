@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kymatics — promo</title>
+    <style>
+      /*
+       * Source scene for the Kymatics promo video.
+       *
+       * Rendered deterministically: the recorder calls window.PROMO.renderFrame(t)
+       * for each frame and screenshots the result, so there are no CSS
+       * transitions or keyframe animations here — every visual property is set
+       * from `t` by the script below. That is what makes the output smooth
+       * (no dropped frames) and reproducible (same input, same video).
+       *
+       * Palette is kept in sync with landing/tailwind.config.ts.
+       */
+      :root {
+        --bg: #00052b;
+        --surface: #0a0a3a;
+        --elevated: #12124a;
+        --mint: #4bffca;
+        --purple: #8024e7;
+        --lavender: #b187ff;
+        --cream: #e8e6f0;
+        --muted: #9b97b8;
+        --amber: #ffc86b;
+        --sans: "Liberation Sans", Arial, system-ui, sans-serif;
+        --mono: "Liberation Mono", "DejaVu Sans Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        /* Determinism: nothing may animate on its own. */
+        animation: none !important;
+        transition: none !important;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--cream);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(160px);
+        pointer-events: none;
+      }
+      #glowA {
+        width: 900px;
+        height: 900px;
+        background: var(--purple);
+      }
+      #glowB {
+        width: 820px;
+        height: 820px;
+        background: var(--mint);
+      }
+
+      .scene {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        will-change: opacity, transform;
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        text-align: center;
+      }
+
+      .label {
+        font-size: 20px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--mint);
+        font-weight: 700;
+      }
+
+      .wordmark {
+        font-size: 168px;
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        background: linear-gradient(100deg, var(--lavender), var(--mint));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .tagline {
+        font-size: 36px;
+        color: var(--muted);
+      }
+
+      #rings {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .ring {
+        position: absolute;
+        border: 1.5px solid var(--lavender);
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+      }
+
+      .panel {
+        background: rgba(10, 10, 58, 0.8);
+        border: 1px solid rgba(177, 135, 255, 0.24);
+        border-radius: 20px;
+        box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.95);
+      }
+
+      /* ---- Scene 2: voice ---- */
+      #micPanel {
+        width: 1280px;
+        padding: 56px 64px;
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+      }
+      #wave {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        height: 130px;
+      }
+      .bar {
+        width: 9px;
+        border-radius: 5px;
+        background: linear-gradient(180deg, var(--mint), var(--lavender));
+      }
+      #transcript {
+        font-size: 42px;
+        line-height: 1.4;
+        min-height: 120px;
+        text-align: left;
+      }
+      #caret {
+        display: inline-block;
+        width: 4px;
+        height: 40px;
+        background: var(--mint);
+        vertical-align: -7px;
+        margin-left: 4px;
+      }
+      .hint {
+        font-family: var(--mono);
+        font-size: 20px;
+        color: var(--muted);
+      }
+      kbd {
+        background: var(--elevated);
+        border: 1px solid rgba(177, 135, 255, 0.32);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-family: var(--mono);
+        font-size: 19px;
+      }
+
+      /* ---- Board (scenes 3 + 4) ---- */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 420px);
+        gap: 30px;
+      }
+      .column {
+        padding: 24px;
+        min-height: 520px;
+      }
+      .column h3 {
+        font-size: 17px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 22px;
+        font-weight: 700;
+      }
+      .card {
+        background: var(--elevated);
+        border: 1px solid rgba(177, 135, 255, 0.22);
+        border-radius: 14px;
+        padding: 18px 20px;
+        text-align: left;
+        font-size: 20px;
+        line-height: 1.38;
+        margin-bottom: 16px;
+        will-change: transform, opacity;
+      }
+      .card .meta {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .progress {
+        margin-top: 12px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(177, 135, 255, 0.18);
+        overflow: hidden;
+      }
+      .progress span {
+        display: block;
+        height: 100%;
+        background: var(--mint);
+      }
+
+      /* ---- Scene 4: workers ---- */
+      #workerRow {
+        display: flex;
+        gap: 22px;
+        margin-top: 8px;
+      }
+      .worker {
+        width: 250px;
+        padding: 18px 20px;
+        border-radius: 14px;
+        border: 1px solid rgba(177, 135, 255, 0.22);
+        background: rgba(10, 10, 58, 0.85);
+        text-align: left;
+      }
+      .worker .name {
+        font-family: var(--mono);
+        font-size: 17px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .worker .task {
+        margin-top: 10px;
+        font-size: 18px;
+        min-height: 46px;
+        line-height: 1.3;
+      }
+
+      /* ---- Scene 5: log ---- */
+      #log {
+        width: 1420px;
+        padding: 32px 38px;
+        font-family: var(--mono);
+        font-size: 22px;
+        line-height: 1.8;
+        text-align: left;
+        height: 560px;
+        overflow: hidden;
+      }
+      #log div {
+        white-space: nowrap;
+        will-change: transform, opacity;
+      }
+      .ok {
+        color: var(--mint);
+      }
+      .dim {
+        color: var(--muted);
+      }
+
+      /* ---- Scene 6: delivered ---- */
+      #browser {
+        width: 1280px;
+        overflow: hidden;
+      }
+      .chrome {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 18px 22px;
+        background: rgba(18, 18, 74, 0.92);
+        border-bottom: 1px solid rgba(177, 135, 255, 0.2);
+      }
+      .tl {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #3a3a6a;
+      }
+      .urlbar {
+        margin-left: 16px;
+        font-family: var(--mono);
+        font-size: 19px;
+        color: var(--mint);
+        background: rgba(75, 255, 202, 0.09);
+        border: 1px solid rgba(75, 255, 202, 0.24);
+        border-radius: 8px;
+        padding: 7px 16px;
+      }
+      #viewport {
+        padding: 46px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        min-height: 420px;
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .tile {
+        height: 130px;
+        border-radius: 12px;
+        border: 1px solid rgba(177, 135, 255, 0.24);
+        background: rgba(10, 10, 58, 0.8);
+        padding: 18px;
+        text-align: left;
+      }
+      .tile .k {
+        font-size: 14px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .tile .v {
+        margin-top: 10px;
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--mint);
+      }
+      .skeleton {
+        height: 20px;
+        border-radius: 7px;
+        background: linear-gradient(90deg, rgba(177, 135, 255, 0.3), rgba(75, 255, 202, 0.16));
+      }
+      #badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 26px;
+        border-radius: 999px;
+        border: 1px solid rgba(75, 255, 202, 0.45);
+        background: rgba(75, 255, 202, 0.11);
+        color: var(--mint);
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      /* ---- Scene 7: observability ---- */
+      #metricGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 300px);
+        gap: 26px;
+      }
+      .metric {
+        padding: 30px 28px;
+        border-radius: 18px;
+        border: 1px solid rgba(177, 135, 255, 0.22);
+        background: rgba(10, 10, 58, 0.85);
+        text-align: left;
+      }
+      .metric .k {
+        font-size: 15px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .metric .v {
+        margin-top: 14px;
+        font-size: 58px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .metric .sub {
+        margin-top: 10px;
+        font-size: 17px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      #gapNote {
+        margin-top: 6px;
+        font-size: 24px;
+        color: var(--muted);
+        max-width: 1160px;
+        line-height: 1.5;
+      }
+      #gapNote b {
+        color: var(--cream);
+        font-weight: 700;
+      }
+
+      #sparkWrap {
+        width: 1260px;
+        height: 130px;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow" id="glowA"></div>
+    <div class="glow" id="glowB"></div>
+
+    <!-- 1. Title -->
+    <section class="scene" id="s1">
+      <div id="rings">
+        <span class="ring"></span><span class="ring"></span><span class="ring"></span
+        ><span class="ring"></span><span class="ring"></span>
+      </div>
+      <div class="stack">
+        <div class="wordmark">Kymatics</div>
+        <div class="tagline">Speak intent. Get running software.</div>
+      </div>
+    </section>
+
+    <!-- 2. Voice -->
+    <section class="scene" id="s2">
+      <div class="stack">
+        <div class="label">01 — Say it</div>
+        <div class="panel" id="micPanel">
+          <div id="wave"></div>
+          <div id="transcript"><span id="transcriptText"></span><span id="caret"></span></div>
+          <div class="hint">Hold <kbd>Shift</kbd> + <kbd>Space</kbd> to talk</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Queued -->
+    <section class="scene" id="s3">
+      <div class="stack">
+        <div class="label">02 — It becomes a job</div>
+        <div class="board" id="board3"></div>
+      </div>
+    </section>
+
+    <!-- 4. Parallel workers -->
+    <section class="scene" id="s4">
+      <div class="stack">
+        <div class="label">03 — Workers run it in parallel</div>
+        <div class="board" id="board4"></div>
+        <div id="workerRow"></div>
+      </div>
+    </section>
+
+    <!-- 5. Build log -->
+    <section class="scene" id="s5">
+      <div class="stack">
+        <div class="label">04 — Watch it build</div>
+        <div class="panel" id="log"></div>
+      </div>
+    </section>
+
+    <!-- 6. Delivered -->
+    <section class="scene" id="s6">
+      <div class="stack">
+        <div class="label">05 — It's actually running</div>
+        <div class="panel" id="browser">
+          <div class="chrome">
+            <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+            <span class="urlbar">http://localhost:4173</span>
+          </div>
+          <div id="viewport">
+            <div class="skeleton" style="width: 38%"></div>
+            <div class="tiles">
+              <div class="tile"><div class="k">Revenue</div><div class="v">$48.2k</div></div>
+              <div class="tile"><div class="k">Orders</div><div class="v">1,284</div></div>
+              <div class="tile"><div class="k">Refunds</div><div class="v">17</div></div>
+            </div>
+            <div class="skeleton" style="width: 86%; opacity: 0.45"></div>
+            <div class="skeleton" style="width: 66%; opacity: 0.3"></div>
+          </div>
+        </div>
+        <div id="badge">Preview URL registered — verified reachable</div>
+      </div>
+    </section>
+
+    <!-- 7. Observability -->
+    <section class="scene" id="s7">
+      <div class="stack">
+        <div class="label">06 — And it's measured</div>
+        <div id="metricGrid"></div>
+        <svg id="sparkWrap" viewBox="0 0 1260 130" preserveAspectRatio="none">
+          <path id="sparkArea" fill="rgba(75,255,202,0.10)" />
+          <path id="sparkLine" fill="none" stroke="#4bffca" stroke-width="3" />
+        </svg>
+        <div id="gapNote">
+          A job that exits zero isn't a running app. Kymatics tracks
+          <b>delivery rate</b> — jobs that shipped a reachable URL — not just success.
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Close -->
+    <section class="scene" id="s8">
+      <div class="stack">
+        <div class="wordmark" style="font-size: 132px">Kymatics</div>
+        <div class="tagline">From a sentence to a container, without leaving the board.</div>
+      </div>
+    </section>
+
+    <script>
+      // ---------------------------------------------------------------
+      // Easing + helpers. All motion is a pure function of time.
+      // ---------------------------------------------------------------
+      const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+      const easeOut = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+      const easeInOut = (t) =>
+        clamp01(t) < 0.5 ? 4 * Math.pow(clamp01(t), 3) : 1 - Math.pow(-2 * clamp01(t) + 2, 3) / 2;
+      const lerp = (a, b, t) => a + (b - a) * clamp01(t);
+      /** Progress of `t` through the window [start, start+len]. */
+      const seg = (t, start, len) => clamp01((t - start) / len);
+      const el = (id) => document.getElementById(id);
+
+      const TRANSCRIPT =
+        "Build a React dashboard with three stat cards and a sortable table of sales data, and run it in Docker.";
+
+      const LOG_LINES = [
+        ['$ vibe --prompt "Build a React dashboard…"', "dim"],
+        ["creating project subfolder  sales-dashboard/", ""],
+        ["writing  src/App.tsx", ""],
+        ["writing  src/components/StatCard.tsx", ""],
+        ["writing  src/components/SalesTable.tsx", ""],
+        ["writing  Dockerfile", ""],
+        ["$ docker build -t sales-dashboard .", "dim"],
+        ["=> exporting layers                          done", "ok"],
+        ["$ docker run -d -p 4173:80 sales-dashboard", "dim"],
+        ["health check  200 OK on :4173", "ok"],
+        ["POST /v1/jobs/{id}/preview-url  → registered", "ok"],
+      ];
+
+      const WORKERS = [
+        { name: "worker-1", task: "sales-dashboard", claimAt: 0.10, done: 0.82 },
+        { name: "worker-2", task: "quotes-api", claimAt: 0.22, done: 0.70 },
+        { name: "worker-3", task: "auth-service", claimAt: 0.34, done: 0.95 },
+        { name: "worker-4", task: null, blocked: "waiting on auth-service", claimAt: 0.46 },
+      ];
+
+      // Board cards for scene 4: [text, status, lane, claim progress point]
+      const BOARD4 = [
+        ["Sales dashboard with stat cards", "running", 1, 0.10],
+        ["Quotes API with /health", "running", 1, 0.22],
+        ["Auth service with JWT", "running", 1, 0.34],
+        ["Client that calls auth-service", "blocked", 0, 0.0],
+        ["Static marketing page", "done", 2, 0.55],
+      ];
+
+      // ---------------------------------------------------------------
+      // Static DOM construction (done once, then only styled per frame).
+      // ---------------------------------------------------------------
+      const bars = [];
+      for (let i = 0; i < 46; i++) {
+        const bar = document.createElement("span");
+        bar.className = "bar";
+        el("wave").appendChild(bar);
+        bars.push(bar);
+      }
+
+      function makeCard(text, metaHtml) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `${text}<div class="meta">${metaHtml}</div>`;
+        return card;
+      }
+
+      // Scene 3 board: one card landing in Todo.
+      const cols3 = ["Todo", "Running", "Done"].map((title) => {
+        const column = document.createElement("div");
+        column.className = "panel column";
+        column.innerHTML = `<h3>${title}</h3>`;
+        el("board3").appendChild(column);
+        return column;
+      });
+      const card3 = makeCard(
+        "Sales dashboard with three stat cards and a sortable table",
+        '<span class="dot" style="background:var(--lavender)"></span> Queued · rank 1'
+      );
+      cols3[0].appendChild(card3);
+
+      // Scene 4 board: several cards across all three columns.
+      const cols4 = ["Todo", "Running", "Done"].map((title) => {
+        const column = document.createElement("div");
+        column.className = "panel column";
+        column.innerHTML = `<h3>${title}</h3>`;
+        el("board4").appendChild(column);
+        return column;
+      });
+      const cards4 = BOARD4.map(([text, status, lane]) => {
+        const color =
+          status === "done"
+            ? "var(--mint)"
+            : status === "running"
+              ? "var(--mint)"
+              : status === "blocked"
+                ? "var(--amber)"
+                : "var(--lavender)";
+        const meta =
+          status === "blocked"
+            ? `<span class="dot" style="background:${color}"></span> Blocked · 1 dependency`
+            : status === "done"
+              ? `<span class="dot" style="background:${color}"></span> Delivered · preview live`
+              : `<span class="dot" style="background:${color}"></span> Running`;
+        const card = makeCard(text, meta);
+        if (status === "running") {
+          const progress = document.createElement("div");
+          progress.className = "progress";
+          progress.innerHTML = "<span></span>";
+          card.appendChild(progress);
+        }
+        cols4[lane].appendChild(card);
+        return card;
+      });
+
+      const workerEls = WORKERS.map((worker) => {
+        const node = document.createElement("div");
+        node.className = "worker";
+        node.innerHTML =
+          `<div class="name"><span class="dot"></span>${worker.name}</div>` +
+          `<div class="task"></div>`;
+        el("workerRow").appendChild(node);
+        return node;
+      });
+
+      const logEls = LOG_LINES.map(([text, kind]) => {
+        const line = document.createElement("div");
+        line.className = kind;
+        line.textContent = text;
+        el("log").appendChild(line);
+        return line;
+      });
+
+      const METRICS = [
+        { k: "Delivery rate", to: 92, suffix: "%", color: "var(--mint)", sub: "otter_delivery_rate" },
+        { k: "Success rate", to: 96, suffix: "%", color: "var(--lavender)", sub: "otter_success_rate" },
+        { k: "Tokens", to: 4.2, suffix: "M", color: "var(--cream)", sub: "otter_tokens_total", dp: 1 },
+        { k: "Spend", to: 18.4, prefix: "$", color: "var(--amber)", sub: "estimated_cost_usd", dp: 2 },
+      ];
+      const metricEls = METRICS.map((metric) => {
+        const node = document.createElement("div");
+        node.className = "metric";
+        node.innerHTML =
+          `<div class="k">${metric.k}</div>` +
+          `<div class="v" style="color:${metric.color}">0</div>` +
+          `<div class="sub">${metric.sub}</div>`;
+        el("metricGrid").appendChild(node);
+        return node.querySelector(".v");
+      });
+
+      const rings = Array.from(document.querySelectorAll(".ring"));
+      const scenes = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"].map(el);
+
+      // ---------------------------------------------------------------
+      // Per-scene renderers. Each receives local progress p in [0,1] and
+      // local elapsed ms, and sets every property it owns.
+      // ---------------------------------------------------------------
+      function renderTitle(p, ms) {
+        rings.forEach((ring, index) => {
+          // Continuous outward ripple, staggered per ring.
+          const phase = (ms / 3400 + index * 0.2) % 1;
+          ring.style.transform = `scale(${lerp(0.25, 4.2, easeOut(phase))})`;
+          ring.style.opacity = String(0.5 * (1 - phase));
+        });
+        const intro = easeOut(seg(ms, 120, 1100));
+        const wordmark = scenes[0].querySelector(".wordmark");
+        wordmark.style.transform = `translateY(${lerp(28, 0, intro)}px) scale(${lerp(0.965, 1, intro)})`;
+        wordmark.style.opacity = String(intro);
+        const tagline = scenes[0].querySelector(".tagline");
+        const taglineIn = easeOut(seg(ms, 620, 1000));
+        tagline.style.transform = `translateY(${lerp(18, 0, taglineIn)}px)`;
+        tagline.style.opacity = String(taglineIn);
+      }
+
+      function renderVoice(p, ms) {
+        bars.forEach((bar, index) => {
+          // Deterministic pseudo-waveform: layered sines, no randomness.
+          const speaking = clamp01((ms - 400) / 500) * (1 - clamp01((ms - 6400) / 900));
+          const wobble =
+            Math.sin(ms / 150 + index * 0.55) * 0.5 +
+            Math.sin(ms / 83 + index * 1.13) * 0.32 +
+            Math.sin(ms / 47 + index * 2.1) * 0.18;
+          const envelope = 0.42 + 0.58 * Math.sin((index / bars.length) * Math.PI);
+          const height = 10 + Math.abs(wobble) * 96 * envelope * speaking;
+          bar.style.height = `${height.toFixed(2)}px`;
+          bar.style.opacity = String(0.5 + 0.5 * speaking);
+        });
+        const typed = Math.floor(easeInOut(seg(ms, 900, 4200)) * TRANSCRIPT.length);
+        el("transcriptText").textContent = TRANSCRIPT.slice(0, typed);
+        // Caret blinks on a fixed 900ms cycle, and rests once typing ends.
+        el("caret").style.opacity = typed >= TRANSCRIPT.length ? "0" : ms % 900 < 500 ? "1" : "0.15";
+        const panelIn = easeOut(seg(ms, 0, 700));
+        el("micPanel").style.transform = `translateY(${lerp(22, 0, panelIn)}px)`;
+        el("micPanel").style.opacity = String(panelIn);
+      }
+
+      function renderQueued(p, ms) {
+        const fly = easeOut(seg(ms, 500, 900));
+        card3.style.transform = `translate(${lerp(-180, 0, fly)}px, ${lerp(-40, 0, fly)}px) scale(${lerp(0.9, 1, fly)})`;
+        card3.style.opacity = String(fly);
+        // Gentle settle pulse once it lands.
+        const settle = seg(ms, 1400, 700);
+        card3.style.boxShadow =
+          settle > 0 && settle < 1
+            ? `0 0 ${lerp(0, 40, Math.sin(settle * Math.PI))}px -8px rgba(75,255,202,0.75)`
+            : "none";
+      }
+
+      function renderWorkers(p, ms) {
+        cards4.forEach((card, index) => {
+          const [, status, , claimAt] = BOARD4[index];
+          const appear = easeOut(seg(p, index * 0.05, 0.18));
+          card.style.opacity = String(appear);
+          card.style.transform = `translateY(${lerp(16, 0, appear)}px)`;
+          const progress = card.querySelector(".progress span");
+          if (progress) {
+            // Each running card fills at its own pace.
+            const run = clamp01((p - claimAt) / 0.55);
+            progress.style.width = `${(easeInOut(run) * 100).toFixed(1)}%`;
+          }
+          if (status === "blocked") {
+            // Blocked card breathes amber to read as "waiting", not "stalled".
+            card.style.borderColor = `rgba(255,200,107,${(0.3 + 0.3 * Math.sin(ms / 420)).toFixed(3)})`;
+          }
+        });
+        workerEls.forEach((node, index) => {
+          const worker = WORKERS[index];
+          const claimed = p >= worker.claimAt;
+          const finished = worker.done != null && p >= worker.done;
+          const dot = node.querySelector(".dot");
+          const task = node.querySelector(".task");
+          const appear = easeOut(seg(p, 0.02 + index * 0.05, 0.16));
+          node.style.opacity = String(appear);
+          node.style.transform = `translateY(${lerp(14, 0, appear)}px)`;
+          if (worker.blocked) {
+            dot.style.background = "var(--amber)";
+            dot.style.opacity = String(0.45 + 0.45 * Math.sin(ms / 380));
+            task.textContent = claimed ? worker.blocked : "idle";
+            task.style.color = claimed ? "var(--amber)" : "var(--muted)";
+          } else if (finished) {
+            dot.style.background = "var(--mint)";
+            dot.style.opacity = "1";
+            task.textContent = `${worker.task} ✓`;
+            task.style.color = "var(--mint)";
+          } else if (claimed) {
+            dot.style.background = "var(--mint)";
+            // Pulsing dot = actively working.
+            dot.style.opacity = String(0.4 + 0.6 * Math.abs(Math.sin(ms / 300 + index)));
+            task.textContent = worker.task;
+            task.style.color = "var(--cream)";
+          } else {
+            dot.style.background = "var(--muted)";
+            dot.style.opacity = "0.4";
+            task.textContent = "idle";
+            task.style.color = "var(--muted)";
+          }
+        });
+      }
+
+      function renderLog(p, ms) {
+        logEls.forEach((line, index) => {
+          const at = easeOut(seg(ms, 260 + index * 560, 380));
+          line.style.opacity = String(at);
+          line.style.transform = `translateX(${lerp(-14, 0, at)}px)`;
+        });
+      }
+
+      function renderDelivered(p, ms) {
+        const win = easeOut(seg(ms, 0, 800));
+        el("browser").style.transform = `translateY(${lerp(26, 0, win)}px) scale(${lerp(0.975, 1, win)})`;
+        el("browser").style.opacity = String(win);
+        const badgeIn = easeOut(seg(ms, 1500, 700));
+        el("badge").style.opacity = String(badgeIn);
+        el("badge").style.transform = `translateY(${lerp(14, 0, badgeIn)}px)`;
+        // Content fades in behind the chrome, staggered.
+        Array.from(el("viewport").children).forEach((child, index) => {
+          const at = easeOut(seg(ms, 500 + index * 170, 600));
+          child.style.opacity = String(at);
+          child.style.transform = `translateY(${lerp(12, 0, at)}px)`;
+        });
+      }
+
+      function renderObservability(p, ms) {
+        metricEls.forEach((node, index) => {
+          const metric = METRICS[index];
+          const run = easeOut(seg(ms, 300 + index * 190, 1500));
+          const value = metric.to * run;
+          const text = metric.dp ? value.toFixed(metric.dp) : Math.round(value);
+          node.textContent = `${metric.prefix ?? ""}${text}${metric.suffix ?? ""}`;
+          const card = node.parentElement;
+          const appear = easeOut(seg(ms, 150 + index * 150, 700));
+          card.style.opacity = String(appear);
+          card.style.transform = `translateY(${lerp(20, 0, appear)}px)`;
+        });
+        // Sparkline draws left to right, then holds.
+        const draw = easeInOut(seg(ms, 900, 2200));
+        const points = 60;
+        const values = [];
+        for (let i = 0; i < points; i++) {
+          const base = 62 + Math.sin(i * 0.42) * 16 + Math.sin(i * 0.17) * 10;
+          values.push(base - i * 0.22);
+        }
+        const shown = Math.max(2, Math.floor(points * draw));
+        let line = "";
+        for (let i = 0; i < shown; i++) {
+          const x = (i / (points - 1)) * 1260;
+          line += `${i === 0 ? "M" : "L"}${x.toFixed(1)},${values[i].toFixed(1)}`;
+        }
+        el("sparkLine").setAttribute("d", line);
+        const lastX = ((shown - 1) / (points - 1)) * 1260;
+        el("sparkArea").setAttribute("d", `${line}L${lastX.toFixed(1)},130L0,130Z`);
+        const noteIn = easeOut(seg(ms, 2600, 900));
+        el("gapNote").style.opacity = String(noteIn);
+        el("gapNote").style.transform = `translateY(${lerp(14, 0, noteIn)}px)`;
+      }
+
+      function renderClose(p, ms) {
+        const intro = easeOut(seg(ms, 100, 1100));
+        const wordmark = scenes[7].querySelector(".wordmark");
+        wordmark.style.opacity = String(intro);
+        wordmark.style.transform = `scale(${lerp(0.97, 1, intro)})`;
+        const tagline = scenes[7].querySelector(".tagline");
+        const taglineIn = easeOut(seg(ms, 600, 1000));
+        tagline.style.opacity = String(taglineIn);
+        tagline.style.transform = `translateY(${lerp(16, 0, taglineIn)}px)`;
+      }
+
+      // ---------------------------------------------------------------
+      // Timeline. Each scene declares its own duration; the recorder reads
+      // the total back so there is no duplicate number to keep in sync.
+      // ---------------------------------------------------------------
+      const SCENES = [
+        { dur: 5200, render: renderTitle },
+        { dur: 8200, render: renderVoice },
+        { dur: 4200, render: renderQueued },
+        { dur: 9000, render: renderWorkers },
+        { dur: 7200, render: renderLog },
+        { dur: 6200, render: renderDelivered },
+        { dur: 8200, render: renderObservability },
+        { dur: 5000, render: renderClose },
+      ];
+      const FADE = 620; // cross-fade window between scenes
+
+      let start = 0;
+      for (const scene of SCENES) {
+        scene.start = start;
+        start += scene.dur;
+      }
+      const TOTAL = start;
+
+      function renderFrame(t) {
+        // Ambient glows drift slowly for the whole runtime.
+        const driftA = t / 26000;
+        el("glowA").style.transform =
+          `translate(${(-240 + Math.sin(driftA * Math.PI * 2) * 190).toFixed(1)}px,` +
+          `${(-300 + Math.cos(driftA * Math.PI * 2) * 140).toFixed(1)}px)`;
+        el("glowA").style.opacity = "0.42";
+        const driftB = t / 31000 + 0.35;
+        el("glowB").style.transform =
+          `translate(${(1500 + Math.cos(driftB * Math.PI * 2) * 170).toFixed(1)}px,` +
+          `${(760 + Math.sin(driftB * Math.PI * 2) * 130).toFixed(1)}px)`;
+        el("glowB").style.opacity = "0.2";
+
+        SCENES.forEach((scene, index) => {
+          const node = scenes[index];
+          const local = t - scene.start;
+          const inWindow = local > -FADE && local < scene.dur + FADE;
+          if (!inWindow) {
+            node.style.opacity = "0";
+            return;
+          }
+          // Fade in over FADE, hold, fade out over FADE.
+          const fadeIn = clamp01(local / FADE);
+          const fadeOut = 1 - clamp01((local - scene.dur) / FADE);
+          const alpha = Math.min(fadeIn, fadeOut);
+          node.style.opacity = String(easeInOut(alpha));
+          // Outgoing scenes lift slightly; incoming rise into place.
+          const drift = local < 0 ? lerp(14, 0, fadeIn) : local > scene.dur ? lerp(0, -14, 1 - fadeOut) : 0;
+          node.style.transform = `translateY(${drift.toFixed(2)}px)`;
+          if (alpha > 0) {
+            scene.render(clamp01(local / scene.dur), Math.max(0, local));
+          }
+        });
+      }
+
+      window.PROMO = { renderFrame, totalMs: TOTAL, fps: 60, width: 1920, height: 1080 };
+      renderFrame(0);
+    </script>
+  </body>
+</html>
